@@ -60,9 +60,20 @@ Future<String> _getFileContent(String path, [String? part]) async {
 ///
 /// When [compareWithOutput] is `false`, the test will pass if there
 /// are no errors in the generated code.
-Future<void> testGenerator<T extends Generator>(
+void testGenerator<T extends Generator>(
   String fileName, {
   required T Function() generator,
+  bool compareWithOutput = false,
+}) =>
+    _testGenerator(
+      fileName,
+      generator,
+      compareWithOutput: compareWithOutput,
+    );
+
+Future<void> _testGenerator<T extends Generator>(
+  String fileName,
+  T Function() generator, {
   bool compareWithOutput = false,
 }) async {
   final inputs = <String, String>{};
