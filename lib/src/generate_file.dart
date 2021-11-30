@@ -7,10 +7,10 @@ import 'package:source_gen/source_gen.dart';
 /// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
 ///
 /// [addPart] adds `part '[fileName].g.dart';' to the file after imports
-Future<String> inputContent(
+String inputContent(
   String fileName, {
   bool addPart = false,
-}) async {
+}) {
   final path = '${GeneratorPath.input}/$fileName.dart';
 
   String? part;
@@ -19,7 +19,7 @@ Future<String> inputContent(
     part = "part '$fileName.g.dart';";
   }
 
-  final content = await _getFileContent(path, part);
+  final content = _getFileContent(path, part);
 
   return content;
 }
@@ -30,10 +30,10 @@ Future<String> inputContent(
 /// - `part of '[fileName].dart';`
 /// - `// GENERATED CODE - DO NOT MODIFY BY HAND`
 /// - Generator's name (`T`) comment
-Future<String> outputContent<T extends Generator>(String fileName) async {
+String outputContent<T extends Generator>(String fileName) {
   final path = '${GeneratorPath.output}/$fileName.dart';
 
-  final output = await _getFileContent(path);
+  final output = _getFileContent(path);
   const generatedByHand = '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
 
   final part = "part of '$fileName.dart';\n";
@@ -46,15 +46,14 @@ Future<String> outputContent<T extends Generator>(String fileName) async {
   return [generatedByHand, part, generator, output].join('\n');
 }
 
-Future<String> _getFileContent(String path, [String? part]) async {
+String _getFileContent(String path, [String? part]) {
   final file = File(path);
-  late String content;
 
-  try {
-    content = await file.readAsString();
-  } catch (e) {
+  if (!file.existsSync()) {
     throw Exception('File not found: $path');
   }
+
+  final content = file.readAsStringSync();
 
   final partRegex = RegExp("part .*';\n");
 
@@ -62,7 +61,24 @@ Future<String> _getFileContent(String path, [String? part]) async {
     return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
   }
 
-  return content;
+  if (!content.contains(RegExp('import .*;'))) {
+    return [part ?? '', content].join('\n');
+  }
+
+  if (part == null) {
+    return content;
+  }
+
+  final lines = content.split('\n');
+  final indexAfterImport = lines.indexWhere(
+    (line) =>
+        !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
+        line.isNotEmpty,
+  );
+
+  lines.insertAll(indexAfterImport, [part, '']);
+
+  return lines.join('\n');
 }
 
 /// Run test with code generated from [inputContent]
@@ -72,20 +88,9 @@ Future<String> _getFileContent(String path, [String? part]) async {
 ///
 /// When [compareWithOutput] is `false`, the test will pass if there
 /// are no errors in the generated code.
-void testGenerator<T extends Generator>(
+Future<void> testPartGenerator<T extends Generator>(
   String fileName, {
   required T Function() generator,
-  bool compareWithOutput = false,
-}) =>
-    _testGenerator(
-      fileName,
-      generator,
-      compareWithOutput: compareWithOutput,
-    );
-
-Future<void> _testGenerator<T extends Generator>(
-  String fileName,
-  T Function() generator, {
   bool compareWithOutput = false,
 }) async {
   final inputs = <String, String>{};
@@ -95,12 +100,12 @@ Future<void> _testGenerator<T extends Generator>(
   // If the output is requested, then we need to add the "part" to the file
   final addPart = compareWithOutput;
 
-  final content = await inputContent(fileName, addPart: addPart);
+  final content = inputContent(fileName, addPart: addPart);
 
   inputs['$fileBase.dart'] = content;
 
   if (compareWithOutput) {
-    final output = await outputContent<T>(fileName);
+    final output = outputContent<T>(fileName);
 
     outputs['$fileBase.g.dart'] = output;
   }
