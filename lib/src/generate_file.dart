@@ -48,7 +48,13 @@ Future<String> outputContent<T extends Generator>(String fileName) async {
 
 Future<String> _getFileContent(String path, [String? part]) async {
   final file = File(path);
-  final content = await file.readAsString();
+  late String content;
+
+  try {
+    content = await file.readAsString();
+  } catch (e) {
+    throw Exception('File not found: $path');
+  }
 
   final partRegex = RegExp("part .*';\n");
 
