@@ -50,7 +50,13 @@ Future<String> _getFileContent(String path, [String? part]) async {
   final file = File(path);
   final content = await file.readAsString();
 
-  return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
+  final partRegex = RegExp("part .*';\n");
+
+  if (content.contains(partRegex)) {
+    return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
+  }
+
+  return content;
 }
 
 /// Run test with code generated from [inputContent]
