@@ -20,16 +20,29 @@ class GeneratorPrep {
   final List<Generator> generators;
   final bool compareWithOutput;
 
-  Builder get builder => PartBuilder(generators, '.g.dart');
+  Builder get builder {
+    return PartBuilder(generators, '.g.dart');
+  }
 
-  Iterable<Content> get _inContent =>
-      fileNames.map((file) => Content(file, addPart: compareWithOutput));
-  Iterable<Content> get _outContent =>
-      fileNames.map((file) => Content.output(file, generators));
+  Iterable<Content> get _inContent {
+    return fileNames.map((file) {
+      return Content(file, addPart: compareWithOutput);
+    });
+  }
 
-  Map<String, String> get inputs => _puts(_inContent);
-  Map<String, String> get outputs =>
-      compareWithOutput ? _puts(_outContent) : {};
+  Iterable<Content> get _outContent {
+    return fileNames.map((file) {
+      return Content.output(file, generators);
+    });
+  }
+
+  Map<String, String> get inputs {
+    return _puts(_inContent);
+  }
+
+  Map<String, String> get outputs {
+    return compareWithOutput ? _puts(_outContent) : {};
+  }
 
   Map<String, String> _puts(Iterable<Content> items) {
     final result =
