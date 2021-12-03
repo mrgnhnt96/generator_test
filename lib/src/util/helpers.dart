@@ -20,6 +20,7 @@ String outputContentFromTypes(String fileName, Iterable<String> type) {
   return [generatedByHand, part, generator, output].join('\n');
 }
 
+/// gets the file's content from the given [path].
 String getFileContent(String path, [String? part]) {
   final file = File(path);
 
