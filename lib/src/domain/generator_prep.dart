@@ -75,7 +75,16 @@ class GeneratorPrep {
 
   /// checks if the path is a provided input file
   bool isInput(String path) {
-    final file = path.replaceAll(Content.lib, '');
+    if (!path.contains('.dart')) {
+      return false;
+    }
+
+    final extStart = path.indexOf('.');
+    if (extStart == -1) {
+      return false;
+    }
+
+    final file = path.substring(0, extStart).replaceAll(Content.lib, '');
 
     return fileNames.contains(file);
   }
