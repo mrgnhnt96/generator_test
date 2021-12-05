@@ -10,14 +10,22 @@ class GeneratorPrep {
     this.fileNames,
     Generator generator, {
     this.compareWithOutput = false,
-  }) : generators = [generator];
+  })  : generators = [generator],
+        _builder = null;
 
   /// prepares the generators and files for testing
   GeneratorPrep.multi(
     this.fileNames,
     this.generators, {
     this.compareWithOutput = false,
-  });
+  }) : _builder = null;
+
+  /// uses the provided builder and files for testing
+  GeneratorPrep.fromBuilder(
+    this.fileNames,
+    this._builder, {
+    this.compareWithOutput = false,
+  }) : generators = [];
 
   /// the names of the files to test
   final List<String> fileNames;
@@ -28,9 +36,11 @@ class GeneratorPrep {
   /// whether to compare the output file with the output of the generator
   final bool compareWithOutput;
 
+  final Builder? _builder;
+
   /// the builder for the test
   Builder get builder {
-    return PartBuilder(generators, '.g.dart');
+    return _builder ?? PartBuilder(generators, '.g.dart');
   }
 
   Iterable<Content> get _inContent {
