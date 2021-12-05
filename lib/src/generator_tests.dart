@@ -73,15 +73,25 @@ Future<void> testPartGenerators(
 
 /// Test builder that impact a group of files.
 Future<void> testPackageBuilder(
-  List<String> fileNames,
-  Builder builder, {
+  List<String> fileNames, {
+  Map<String, dynamic>? builderOptions,
+  required GetBuilder builder,
   bool compareWithOutput = false,
 }) async {
+  final options = _TestBuilderOptions(builderOptions ?? <String, dynamic>{});
+
   final codeGens = GeneratorPrep.fromBuilder(
     fileNames,
-    builder,
+    builder(options),
     compareWithOutput: compareWithOutput,
   );
 
   await codeGens.test();
+}
+
+/// provides the build options to return a builder
+typedef GetBuilder = Builder Function(BuilderOptions options);
+
+class _TestBuilderOptions extends BuilderOptions {
+  _TestBuilderOptions(Map<String, dynamic> config) : super(config);
 }
