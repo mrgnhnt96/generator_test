@@ -76,38 +76,42 @@ String getFileContent(
   String? part,
   bool format = false,
 }) {
-  final file = File(path);
+  String getContent() {
+    final file = File(path);
 
-  if (!file.existsSync()) {
-    throw Exception('File not found: $path');
+    if (!file.existsSync()) {
+      throw Exception('File not found: $path');
+    }
+
+    final content = file.readAsStringSync();
+
+    final partRegex = RegExp("part .*';\n");
+
+    if (content.contains(partRegex)) {
+      return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
+    }
+
+    if (!content.contains(RegExp('import .*;'))) {
+      return [part ?? '', content].join('\n');
+    }
+
+    if (part == null) {
+      return content;
+    }
+
+    final lines = content.split('\n');
+    final indexAfterImport = lines.indexWhere(
+      (line) =>
+          !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
+          line.isNotEmpty,
+    );
+
+    lines.insertAll(indexAfterImport, [part, '']);
+
+    return lines.join('\n');
   }
 
-  final content = file.readAsStringSync();
-
-  final partRegex = RegExp("part .*';\n");
-
-  if (content.contains(partRegex)) {
-    return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
-  }
-
-  if (!content.contains(RegExp('import .*;'))) {
-    return [part ?? '', content].join('\n');
-  }
-
-  if (part == null) {
-    return content;
-  }
-
-  final lines = content.split('\n');
-  final indexAfterImport = lines.indexWhere(
-    (line) =>
-        !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
-        line.isNotEmpty,
-  );
-
-  lines.insertAll(indexAfterImport, [part, '']);
-
-  final result = lines.join('\n');
+  final result = getContent();
 
   if (format) {
     return formatContent(result);
