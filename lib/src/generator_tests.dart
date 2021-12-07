@@ -5,43 +5,6 @@ import 'package:generator_test/src/domain/domain.dart';
 import 'package:generator_test/src/util/util.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
-///
-/// [addPart] adds `part '[fileName].g.dart';' to the file after imports
-String inputContent(
-  String fileName, {
-  bool addPart = false,
-}) {
-  final path = '${GeneratorPath.input}/$fileName.dart';
-
-  String? part;
-
-  if (addPart) {
-    part = "part '$fileName.g.dart';";
-  }
-
-  final content = getFileContent(path, part);
-
-  return content;
-}
-
-/// Retrieves the file content from the [GeneratorPath.output]/[fileName].dart file.
-///
-/// Automatically adds
-/// - `part of '[fileName].dart';`
-/// - `// GENERATED CODE - DO NOT MODIFY BY HAND`
-/// - Generator's name (`T`) comment
-String outputContent<T extends Generator>(String fileName) {
-  return outputContentFromTypes(fileName, ['$T']);
-}
-
-/// Run test with code generated from [inputContent]
-///
-/// When [compareWithOutput] is `true`, the generated code is compared
-/// with [outputContent]
-///
-/// When [compareWithOutput] is `false`, the test will pass if there
-/// are no errors in the generated code.
 Future<void> testPartGenerator(
   String fileName, {
   required Generator generator,
@@ -78,7 +41,7 @@ Future<void> testPackageBuilder(
   required GetBuilder builder,
   bool compareWithOutput = false,
 }) async {
-  final options = _TestBuilderOptions(builderOptions ?? <String, dynamic>{});
+  final options = TestBuilderOptions(builderOptions ?? <String, dynamic>{});
 
   final codeGens = GeneratorPrep.fromBuilder(
     fileNames,
@@ -91,7 +54,3 @@ Future<void> testPackageBuilder(
 
 /// provides the build options to return a builder
 typedef GetBuilder = Builder Function(BuilderOptions options);
-
-class _TestBuilderOptions extends BuilderOptions {
-  _TestBuilderOptions(Map<String, dynamic> config) : super(config);
-}
