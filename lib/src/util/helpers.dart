@@ -39,7 +39,7 @@ String outputContent(
   Type generatorType, {
   bool format = true,
 }) {
-  return outputContentFromTypes(
+  return outputContentMultiGen(
     fileName,
     ['$generatorType'],
     format: format,
@@ -47,7 +47,7 @@ String outputContent(
 }
 
 /// Gets the output content from the given [fileName].
-String outputContentFromTypes(
+String outputContentMultiGen(
   String fileName,
   Iterable<String> type, {
   bool format = true,

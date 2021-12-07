@@ -51,7 +51,7 @@ class Content {
   /// The contents of the file as a string
   String get content {
     if (type == PutType.output) {
-      return _content ??= outputContentFromTypes(
+      return _content ??= outputContentMultiGen(
         fileName,
         _generators.map((e) => '$e'),
         format: format,
