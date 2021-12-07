@@ -35,7 +35,7 @@ String inputContent(
 /// - Generator's name (`T`) comment
 String outputContent(
   String fileName,
-  String generatorName,
+  String? generatorName,
 ) {
   final path = '${GeneratorPath.output}/$fileName.dart';
 
@@ -50,7 +50,12 @@ String outputContent(
 // **************************************************************************
 ''';
 
-  final result = [generatedByHand, part, generator, output].join('\n');
+  final result = [
+    generatedByHand,
+    part,
+    if (generatorName != null) generator,
+    output,
+  ].join('\n');
 
   return result;
 }

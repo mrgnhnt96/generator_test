@@ -47,7 +47,7 @@ class Content {
     if (type == PutType.output) {
       return _content ??= outputContent(
         fileName,
-        _generator!.toString(),
+        _generator?.toString(),
       );
     }
 
