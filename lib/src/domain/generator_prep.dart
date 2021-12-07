@@ -9,23 +9,26 @@ class GeneratorPrep {
   GeneratorPrep(
     this.fileNames,
     Generator generator, {
-    this.compareWithOutput = false,
+    TestConfig? config,
   })  : generators = [generator],
+        config = config ?? const TestConfig(),
         _builder = null;
 
   /// prepares the generators and files for testing
   GeneratorPrep.multi(
     this.fileNames,
     this.generators, {
-    this.compareWithOutput = false,
-  }) : _builder = null;
+    TestConfig? config,
+  })  : _builder = null,
+        config = config ?? const TestConfig();
 
   /// uses the provided builder and files for testing
   GeneratorPrep.fromBuilder(
     this.fileNames,
     this._builder, {
-    this.compareWithOutput = false,
-  }) : generators = [];
+    TestConfig? config,
+  })  : generators = [],
+        config = config ?? const TestConfig();
 
   /// the names of the files to test
   final List<String> fileNames;
@@ -33,10 +36,10 @@ class GeneratorPrep {
   /// the generators to test
   final List<Generator> generators;
 
-  /// whether to compare the output file with the output of the generator
-  final bool compareWithOutput;
-
   final Builder? _builder;
+
+  /// the options to use for testing
+  final TestConfig config;
 
   /// the builder for the test
   Builder get builder {
@@ -45,13 +48,21 @@ class GeneratorPrep {
 
   Iterable<Content> get _inContent {
     return fileNames.map((file) {
-      return Content(file, addPart: compareWithOutput);
+      return Content(
+        file,
+        addPart: config.compareWithOutput,
+        format: config.formatInput,
+      );
     });
   }
 
   Iterable<Content> get _outContent {
     return fileNames.map((file) {
-      return Content.output(file, generators);
+      return Content.output(
+        file,
+        generators,
+        format: config.formatOutput,
+      );
     });
   }
 
@@ -62,7 +73,7 @@ class GeneratorPrep {
 
   /// the output files for the test
   Map<String, String> get outputs {
-    return compareWithOutput ? _puts(_outContent) : {};
+    return config.compareWithOutput ? _puts(_outContent) : {};
   }
 
   Map<String, String> _puts(Iterable<Content> items) {

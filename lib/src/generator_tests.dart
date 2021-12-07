@@ -5,15 +5,16 @@ import 'package:generator_test/src/domain/domain.dart';
 import 'package:generator_test/src/util/util.dart';
 import 'package:source_gen/source_gen.dart';
 
+/// Run test with code generated from [inputContent]
 Future<void> testPartGenerator(
   String fileName, {
   required Generator generator,
-  bool compareWithOutput = false,
+  TestConfig? config,
 }) async {
   final codeGens = GeneratorPrep(
     [fileName],
     generator,
-    compareWithOutput: compareWithOutput,
+    config: config,
   );
 
   await codeGens.test();
@@ -23,12 +24,12 @@ Future<void> testPartGenerator(
 Future<void> testPartGenerators(
   List<String> fileNames,
   List<Generator> generators, {
-  bool compareWithOutput = false,
+  TestConfig? config,
 }) async {
   final codeGens = GeneratorPrep.multi(
     fileNames,
     generators,
-    compareWithOutput: compareWithOutput,
+    config: config,
   );
 
   await codeGens.test();
@@ -39,14 +40,15 @@ Future<void> testPackageBuilder(
   List<String> fileNames, {
   Map<String, dynamic>? builderOptions,
   required GetBuilder builder,
-  bool compareWithOutput = false,
+  TestConfig? config,
 }) async {
-  final options = TestBuilderOptions(builderOptions ?? <String, dynamic>{});
+  final builderConfig =
+      TestBuilderOptions(builderOptions ?? <String, dynamic>{});
 
   final codeGens = GeneratorPrep.fromBuilder(
     fileNames,
-    builder(options),
-    compareWithOutput: compareWithOutput,
+    builder(builderConfig),
+    config: config,
   );
 
   await codeGens.test();
