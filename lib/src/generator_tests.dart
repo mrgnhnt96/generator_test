@@ -23,7 +23,10 @@ Future<void> testPartGenerator(
 /// provides the build options to return a builder
 typedef GetBuilder = Builder Function(BuilderOptions options);
 
-/// Test builder that impact a group of files.
+/// runs test for the Generator(s) with the given [builder]
+///
+/// !! If your [builder] contains a header, make sure to include it in
+/// the output file.
 Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
