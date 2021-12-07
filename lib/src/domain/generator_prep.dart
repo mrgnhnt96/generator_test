@@ -52,6 +52,7 @@ class GeneratorPrep {
     return Content(
       fileName,
       addPart: compareWithOutput,
+      extension: extension,
     );
   }
 

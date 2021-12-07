@@ -18,9 +18,10 @@ class Content {
   Content(
     this.fileName, {
     required this.addPart,
+    String? extension,
   })  : type = PutType.input,
         header = null,
-        _extension = '.dart',
+        _extension = extension ?? '.dart',
         _generator = null;
 
   /// {@macro content}
@@ -64,6 +65,7 @@ class Content {
     return _content ??= inputContent(
       fileName,
       addPart: addPart,
+      extension: extension,
     );
   }
 

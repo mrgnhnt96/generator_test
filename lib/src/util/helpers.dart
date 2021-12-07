@@ -10,13 +10,14 @@ import 'package:generator_test/src/domain/domain.dart';
 String inputContent(
   String fileName, {
   bool addPart = false,
+  required String extension,
 }) {
   final path = '${GeneratorPath.input}/$fileName.dart';
 
   String? part;
 
   if (addPart) {
-    part = "part '$fileName.g.dart';";
+    part = "part '$fileName$extension';";
   }
 
   final content = getFileContent(
