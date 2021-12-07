@@ -85,7 +85,7 @@ class Content {
   /// The extension of the file
   String get extension {
     if (type == PutType.input) {
-      return _extension;
+      return '.dart';
     }
 
     var ext = _extension;
