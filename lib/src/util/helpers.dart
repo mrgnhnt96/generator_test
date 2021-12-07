@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:dart_style/dart_style.dart';
 import 'package:generator_test/src/domain/domain.dart';
 
 /// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
@@ -11,7 +10,6 @@ import 'package:generator_test/src/domain/domain.dart';
 String inputContent(
   String fileName, {
   bool addPart = false,
-  bool format = true,
 }) {
   final path = '${GeneratorPath.input}/$fileName.dart';
 
@@ -24,7 +22,6 @@ String inputContent(
   final content = getFileContent(
     path,
     part: part,
-    format: format,
   );
 
   return content;
@@ -38,12 +35,11 @@ String inputContent(
 /// - Generator's name (`T`) comment
 String outputContent(
   String fileName,
-  String generatorName, {
-  bool format = true,
-}) {
+  String generatorName,
+) {
   final path = '${GeneratorPath.output}/$fileName.dart';
 
-  final output = getFileContent(path, format: format);
+  final output = getFileContent(path);
   const generatedByHand = '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
 
   final part = "part of '$fileName.dart';\n";
@@ -63,7 +59,6 @@ String outputContent(
 String getFileContent(
   String path, {
   String? part,
-  bool format = false,
 }) {
   part = part == null ? '' : '$part\n';
 
@@ -104,21 +99,5 @@ String getFileContent(
 
   final result = getContent();
 
-  if (format) {
-    return formatContent(result);
-  }
-
   return result;
-}
-
-/// formats the [content] to dart's code style
-String formatContent(String content) {
-  final formatter = DartFormatter();
-  try {
-    return formatter.format(content);
-  } catch (e) {
-    // ignore: avoid_print
-    print('Could not format content. Error: $e');
-    return content;
-  }
 }

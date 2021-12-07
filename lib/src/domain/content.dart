@@ -18,7 +18,6 @@ class Content {
   Content(
     this.fileName, {
     required this.addPart,
-    this.format = false,
   })  : type = PutType.input,
         _generator = null;
 
@@ -27,9 +26,8 @@ class Content {
   /// Formats the contents as a generated file
   Content.output(
     this.fileName,
-    this._generator, {
-    this.format = true,
-  })  : type = PutType.output,
+    this._generator,
+  )   : type = PutType.output,
         addPart = true;
 
   /// The name of the file
@@ -42,9 +40,6 @@ class Content {
   /// whether to add a part to the file
   final bool addPart;
 
-  /// whether to format the content
-  final bool format;
-
   String? _content;
 
   /// The contents of the file as a string
@@ -53,14 +48,12 @@ class Content {
       return _content ??= outputContent(
         fileName,
         _generator!.toString(),
-        format: format,
       );
     }
 
     return _content ??= inputContent(
       fileName,
       addPart: addPart,
-      format: format,
     );
   }
 

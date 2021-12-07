@@ -9,35 +9,31 @@ import 'package:source_gen/source_gen.dart';
 Future<void> testPartGenerator(
   String fileName, {
   required Generator generator,
-  TestConfig? config,
 }) async {
-  final codeGens = GeneratorPrep(
+  final codeGen = GeneratorPrep(
     fileName,
     generator,
-    config: config,
   );
 
-  await codeGens.test();
+  await codeGen.test();
 }
+
+/// provides the build options to return a builder
+typedef GetBuilder = Builder Function(BuilderOptions options);
 
 /// Test builder that impact a group of files.
 Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
   required GetBuilder builder,
-  TestConfig? config,
 }) async {
   final builderConfig =
       TestBuilderOptions(builderOptions ?? <String, dynamic>{});
 
-  final codeGens = GeneratorPrep.fromBuilder(
+  final codeGen = GeneratorPrep.fromBuilder(
     fileName,
     builder(builderConfig),
-    config: config,
   );
 
-  await codeGens.test();
+  await codeGen.test();
 }
-
-/// provides the build options to return a builder
-typedef GetBuilder = Builder Function(BuilderOptions options);

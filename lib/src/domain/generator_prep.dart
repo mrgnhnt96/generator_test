@@ -9,28 +9,22 @@ class GeneratorPrep {
   GeneratorPrep(
     this.fileName,
     this.generator, {
-    TestConfig? config,
     this.compareWithOutput = false,
-  })  : config = config ?? const TestConfig(),
-        _builder = null;
+  }) : _builder = null;
 
   /// prepares the generator and files for testing
   GeneratorPrep.multi(
     this.fileName,
     this.generator, {
-    TestConfig? config,
     this.compareWithOutput = false,
-  })  : _builder = null,
-        config = config ?? const TestConfig();
+  }) : _builder = null;
 
   /// uses the provided builder and files for testing
   GeneratorPrep.fromBuilder(
     this.fileName,
     this._builder, {
-    TestConfig? config,
     this.compareWithOutput = false,
-  })  : generator = null,
-        config = config ?? const TestConfig();
+  }) : generator = null;
 
   /// the names of the files to test
   final String fileName;
@@ -39,9 +33,6 @@ class GeneratorPrep {
   final Generator? generator;
 
   final Builder? _builder;
-
-  /// the options to use for testing
-  final TestConfig config;
 
   /// compares the input content with the generated output
   ///
@@ -58,7 +49,6 @@ class GeneratorPrep {
     return Content(
       fileName,
       addPart: compareWithOutput,
-      format: config.formatInput,
     );
   }
 
@@ -66,7 +56,6 @@ class GeneratorPrep {
     return Content.output(
       fileName,
       generator,
-      format: config.formatOutput,
     );
   }
 
