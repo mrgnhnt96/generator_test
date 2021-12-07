@@ -49,8 +49,7 @@ String outputContent(
   final generator = '''
 // **************************************************************************
 // $generatorName
-// **************************************************************************
-''';
+// **************************************************************************''';
 
   final result = [
     generatedHeader,
@@ -67,7 +66,7 @@ String getFileContent(
   String path, {
   String? part,
 }) {
-  part = part == null ? '' : '$part\n';
+  part = part == null ? '' : '$part\n\n';
 
   String getContent() {
     final file = File(path);
@@ -78,14 +77,14 @@ String getFileContent(
 
     final content = file.readAsStringSync();
 
-    final partRegex = RegExp("part .*';\n");
+    final partRegex = RegExp(r"part .*';[\r\n]+");
 
     if (content.contains(partRegex)) {
-      return content.replaceFirst(RegExp("part .*';\n"), part ?? '');
+      return content.replaceFirst(partRegex, part ?? '');
     }
 
     if (!content.contains(RegExp('import .*;'))) {
-      return [part ?? '', content].join('\n');
+      return [part ?? '', content].join();
     }
 
     if (part == null) {
@@ -99,7 +98,7 @@ String getFileContent(
           line.isNotEmpty,
     );
 
-    lines.insertAll(indexAfterImport, [part, '']);
+    lines.insert(indexAfterImport, part);
 
     return lines.join('\n');
   }
