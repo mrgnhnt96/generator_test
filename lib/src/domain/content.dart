@@ -20,6 +20,7 @@ class Content {
     required this.addPart,
   })  : type = PutType.input,
         header = null,
+        _extension = '.dart',
         _generator = null;
 
   /// {@macro content}
@@ -29,7 +30,9 @@ class Content {
     this.fileName,
     this._generator, {
     this.header,
+    String? extension,
   })  : type = PutType.output,
+        _extension = extension ?? '.g.dart',
         addPart = true;
 
   /// The name of the file
@@ -44,6 +47,7 @@ class Content {
 
   /// the header of the output file
   final String? header;
+  final String _extension;
 
   String? _content;
 
@@ -77,5 +81,27 @@ class Content {
   String get filePath => '$lib$fileName$extension';
 
   /// The extension of the file
-  String get extension => type == PutType.output ? '.g.dart' : '.dart';
+  String get extension {
+    if (type == PutType.input) {
+      return _extension;
+    }
+
+    var ext = _extension;
+
+    if (!ext.startsWith('.')) {
+      ext = '.$ext';
+    }
+
+    if (!ext.endsWith('.dart')) {
+      ext = '$ext.dart';
+    }
+
+    final extRegex = RegExp(r'\.[\w]+\.dart');
+
+    if (!extRegex.hasMatch(ext)) {
+      throw Exception('Invalid extension: $ext');
+    }
+
+    return ext;
+  }
 }

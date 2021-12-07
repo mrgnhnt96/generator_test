@@ -30,9 +30,10 @@ typedef GetBuilder = Builder Function(BuilderOptions options);
 Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
-  String? header,
   required GetBuilder builder,
   bool compareWithOutput = true,
+  String? header,
+  String? extension,
 }) async {
   final builderConfig =
       TestBuilderOptions(builderOptions ?? <String, dynamic>{});
@@ -42,6 +43,7 @@ Future<void> testPackageBuilder(
     builder(builderConfig),
     compareWithOutput: compareWithOutput,
     header: header,
+    extension: extension,
   );
 
   await codeGen.test();

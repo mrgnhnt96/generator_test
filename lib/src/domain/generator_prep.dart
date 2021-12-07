@@ -11,14 +11,7 @@ class GeneratorPrep {
     this.generator, {
     this.compareWithOutput = false,
   })  : _builder = null,
-        header = null;
-
-  /// prepares the generator and files for testing
-  GeneratorPrep.multi(
-    this.fileName,
-    this.generator, {
-    this.compareWithOutput = false,
-  })  : _builder = null,
+        extension = null,
         header = null;
 
   /// uses the provided builder and files for testing
@@ -27,6 +20,7 @@ class GeneratorPrep {
     this._builder, {
     this.compareWithOutput = false,
     this.header,
+    this.extension,
   }) : generator = null;
 
   /// the names of the files to test
@@ -46,6 +40,9 @@ class GeneratorPrep {
   /// the header to use for the generated output
   final String? header;
 
+  /// the extension of the generated file
+  final String? extension;
+
   /// the builder for the test
   Builder get builder {
     return _builder ?? PartBuilder([generator!], '.g.dart');
@@ -63,6 +60,7 @@ class GeneratorPrep {
       fileName,
       generator,
       header: header,
+      extension: extension,
     );
   }
 
