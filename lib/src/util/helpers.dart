@@ -1,3 +1,5 @@
+// ignore_for_file: parameter_assignments
+
 import 'dart:io';
 
 import 'package:dart_style/dart_style.dart';
@@ -36,20 +38,7 @@ String inputContent(
 /// - Generator's name (`T`) comment
 String outputContent(
   String fileName,
-  Type generatorType, {
-  bool format = true,
-}) {
-  return outputContentMultiGen(
-    fileName,
-    ['$generatorType'],
-    format: format,
-  );
-}
-
-/// Gets the output content from the given [fileName].
-String outputContentMultiGen(
-  String fileName,
-  Iterable<String> type, {
+  String generatorName, {
   bool format = true,
 }) {
   final path = '${GeneratorPath.output}/$fileName.dart';
@@ -59,11 +48,11 @@ String outputContentMultiGen(
 
   final part = "part of '$fileName.dart';\n";
 
-  // TODO: look into how this looks with multiple generators
   final generator = '''
 // **************************************************************************
-// ${type.first}
-// **************************************************************************''';
+// $generatorName
+// **************************************************************************
+''';
 
   final result = [generatedByHand, part, generator, output].join('\n');
 
@@ -76,6 +65,8 @@ String getFileContent(
   String? part,
   bool format = false,
 }) {
+  part = part == null ? '' : '$part\n';
+
   String getContent() {
     final file = File(path);
 

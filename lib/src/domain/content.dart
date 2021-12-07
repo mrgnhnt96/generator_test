@@ -20,21 +20,21 @@ class Content {
     required this.addPart,
     this.format = false,
   })  : type = PutType.input,
-        _generators = const [];
+        _generator = null;
 
   /// {@macro content}
   ///
   /// Formats the contents as a generated file
   Content.output(
     this.fileName,
-    this._generators, {
+    this._generator, {
     this.format = true,
   })  : type = PutType.output,
         addPart = true;
 
   /// The name of the file
   final String fileName;
-  final List<Generator> _generators;
+  final Generator? _generator;
 
   /// If the content is input or output
   final PutType type;
@@ -50,9 +50,9 @@ class Content {
   /// The contents of the file as a string
   String get content {
     if (type == PutType.output) {
-      return _content ??= outputContentMultiGen(
+      return _content ??= outputContent(
         fileName,
-        _generators.map((e) => '$e'),
+        _generator!.toString(),
         format: format,
       );
     }

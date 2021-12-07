@@ -3,67 +3,71 @@ import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/domain/domain.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// Prepares the generators and files for testing
+/// Prepares the generator and files for testing
 class GeneratorPrep {
   /// prepares the generator and file for testing
   GeneratorPrep(
-    this.fileNames,
-    Generator generator, {
+    this.fileName,
+    this.generator, {
     TestConfig? config,
-  })  : generators = [generator],
-        config = config ?? const TestConfig(),
+    this.compareWithOutput = false,
+  })  : config = config ?? const TestConfig(),
         _builder = null;
 
-  /// prepares the generators and files for testing
+  /// prepares the generator and files for testing
   GeneratorPrep.multi(
-    this.fileNames,
-    this.generators, {
+    this.fileName,
+    this.generator, {
     TestConfig? config,
+    this.compareWithOutput = false,
   })  : _builder = null,
         config = config ?? const TestConfig();
 
   /// uses the provided builder and files for testing
   GeneratorPrep.fromBuilder(
-    this.fileNames,
+    this.fileName,
     this._builder, {
     TestConfig? config,
-  })  : generators = [],
+    this.compareWithOutput = false,
+  })  : generator = null,
         config = config ?? const TestConfig();
 
   /// the names of the files to test
-  final List<String> fileNames;
+  final String fileName;
 
-  /// the generators to test
-  final List<Generator> generators;
+  /// the generator to test
+  final Generator? generator;
 
   final Builder? _builder;
 
   /// the options to use for testing
   final TestConfig config;
 
+  /// compares the input content with the generated output
+  ///
+  /// if false, the test will pass if the generated
+  /// output contains no generated errors
+  final bool compareWithOutput;
+
   /// the builder for the test
   Builder get builder {
-    return _builder ?? PartBuilder(generators, '.g.dart');
+    return _builder ?? PartBuilder([generator!], '.g.dart');
   }
 
-  Iterable<Content> get _inContent {
-    return fileNames.map((file) {
-      return Content(
-        file,
-        addPart: config.compareWithOutput,
-        format: config.formatInput,
-      );
-    });
+  Content get _inContent {
+    return Content(
+      fileName,
+      addPart: compareWithOutput,
+      format: config.formatInput,
+    );
   }
 
-  Iterable<Content> get _outContent {
-    return fileNames.map((file) {
-      return Content.output(
-        file,
-        generators,
-        format: config.formatOutput,
-      );
-    });
+  Content get _outContent {
+    return Content.output(
+      fileName,
+      generator,
+      format: config.formatOutput,
+    );
   }
 
   /// the input files for the test
@@ -73,18 +77,11 @@ class GeneratorPrep {
 
   /// the output files for the test
   Map<String, String> get outputs {
-    return config.compareWithOutput ? _puts(_outContent) : {};
+    return compareWithOutput ? _puts(_outContent) : {};
   }
 
-  Map<String, String> _puts(Iterable<Content> items) {
-    final result =
-        items.fold<Map<String, String>>({}, (previousValue, content) {
-      previousValue[content.filePath] = content.content;
-
-      return previousValue;
-    });
-
-    return result;
+  Map<String, String> _puts(Content put) {
+    return {put.filePath: put.content};
   }
 
   MultiPackageAssetReader? _reader;
@@ -107,7 +104,7 @@ class GeneratorPrep {
 
     final file = path.substring(0, extStart).replaceAll(Content.lib, '');
 
-    return fileNames.contains(file);
+    return fileName.contains(file);
   }
 
   /// tests the generator

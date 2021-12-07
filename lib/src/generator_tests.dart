@@ -12,23 +12,8 @@ Future<void> testPartGenerator(
   TestConfig? config,
 }) async {
   final codeGens = GeneratorPrep(
-    [fileName],
+    fileName,
     generator,
-    config: config,
-  );
-
-  await codeGens.test();
-}
-
-/// Test multiple generators that impact a group of files.
-Future<void> testPartGenerators(
-  List<String> fileNames,
-  List<Generator> generators, {
-  TestConfig? config,
-}) async {
-  final codeGens = GeneratorPrep.multi(
-    fileNames,
-    generators,
     config: config,
   );
 
@@ -37,7 +22,7 @@ Future<void> testPartGenerators(
 
 /// Test builder that impact a group of files.
 Future<void> testPackageBuilder(
-  List<String> fileNames, {
+  String fileName, {
   Map<String, dynamic>? builderOptions,
   required GetBuilder builder,
   TestConfig? config,
@@ -46,7 +31,7 @@ Future<void> testPackageBuilder(
       TestBuilderOptions(builderOptions ?? <String, dynamic>{});
 
   final codeGens = GeneratorPrep.fromBuilder(
-    fileNames,
+    fileName,
     builder(builderConfig),
     config: config,
   );
