@@ -36,11 +36,13 @@ String inputContent(
 String outputContent(
   String fileName,
   String? generatorName,
+  String? header,
 ) {
   final path = '${GeneratorPath.output}/$fileName.dart';
 
   final output = getFileContent(path);
-  const generatedByHand = '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
+  final generatedHeader =
+      header ?? '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
 
   final part = "part of '$fileName.dart';\n";
 
@@ -51,7 +53,7 @@ String outputContent(
 ''';
 
   final result = [
-    generatedByHand,
+    generatedHeader,
     part,
     if (generatorName != null) generator,
     output,

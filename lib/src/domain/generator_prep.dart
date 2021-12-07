@@ -10,20 +10,23 @@ class GeneratorPrep {
     this.fileName,
     this.generator, {
     this.compareWithOutput = false,
-  }) : _builder = null;
+  })  : _builder = null,
+        header = null;
 
   /// prepares the generator and files for testing
   GeneratorPrep.multi(
     this.fileName,
     this.generator, {
     this.compareWithOutput = false,
-  }) : _builder = null;
+  })  : _builder = null,
+        header = null;
 
   /// uses the provided builder and files for testing
   GeneratorPrep.fromBuilder(
     this.fileName,
     this._builder, {
     this.compareWithOutput = false,
+    this.header,
   }) : generator = null;
 
   /// the names of the files to test
@@ -39,6 +42,9 @@ class GeneratorPrep {
   /// if false, the test will pass if the generated
   /// output contains no generated errors
   final bool compareWithOutput;
+
+  /// the header to use for the generated output
+  final String? header;
 
   /// the builder for the test
   Builder get builder {
@@ -56,6 +62,7 @@ class GeneratorPrep {
     return Content.output(
       fileName,
       generator,
+      header: header,
     );
   }
 
