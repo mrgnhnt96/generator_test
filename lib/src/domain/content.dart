@@ -1,4 +1,3 @@
-import 'package:generator_test/src/generator_tests.dart';
 import 'package:generator_test/src/util/util.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -16,7 +15,7 @@ enum PutType {
 /// {@endtemplate}
 class Content {
   /// {@macro content}
-  const Content(
+  Content(
     this.fileName, {
     required this.addPart,
     this.format = false,
@@ -26,7 +25,7 @@ class Content {
   /// {@macro content}
   ///
   /// Formats the contents as a generated file
-  const Content.output(
+  Content.output(
     this.fileName,
     this._generators, {
     this.format = true,
@@ -46,7 +45,7 @@ class Content {
   /// whether to format the content
   final bool format;
 
-  static String? _content;
+  String? _content;
 
   /// The contents of the file as a string
   String get content {
