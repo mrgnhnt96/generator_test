@@ -65,7 +65,7 @@ class Content {
     return _content ??= inputContent(
       fileName,
       addPart: addPart,
-      extension: extension,
+      extension: extension(getOutput: true),
     );
   }
 
@@ -80,11 +80,11 @@ class Content {
   static const String lib = 'a|lib/';
 
   /// the test path of the file
-  String get filePath => '$lib$fileName$extension';
+  String get filePath => '$lib$fileName${extension()}';
 
   /// The extension of the file
-  String get extension {
-    if (type == PutType.input) {
+  String extension({bool getOutput = false}) {
+    if (type == PutType.input && !getOutput) {
       return '.dart';
     }
 
