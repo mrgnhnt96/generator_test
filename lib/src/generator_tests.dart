@@ -7,12 +7,14 @@ import 'package:source_gen/source_gen.dart';
 
 /// Run test with code generated from [inputContent]
 Future<void> testPartGenerator(
-  String fileName, {
-  required Generator generator,
+  String fileName,
+  Generator generator, {
+  bool compareWithOutput = true,
 }) async {
   final codeGen = GeneratorPrep(
     fileName,
     generator,
+    compareWithOutput: compareWithOutput,
   );
 
   await codeGen.test();
@@ -26,6 +28,7 @@ Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
   required GetBuilder builder,
+  bool compareWithOutput = true,
 }) async {
   final builderConfig =
       TestBuilderOptions(builderOptions ?? <String, dynamic>{});
@@ -33,6 +36,7 @@ Future<void> testPackageBuilder(
   final codeGen = GeneratorPrep.fromBuilder(
     fileName,
     builder(builderConfig),
+    compareWithOutput: compareWithOutput,
   );
 
   await codeGen.test();
