@@ -19,6 +19,7 @@ class Content {
   const Content(
     this.fileName, {
     required this.addPart,
+    this.format = false,
   })  : type = PutType.input,
         _generators = const [];
 
@@ -27,8 +28,9 @@ class Content {
   /// Formats the contents as a generated file
   const Content.output(
     this.fileName,
-    this._generators,
-  )   : type = PutType.output,
+    this._generators, {
+    this.format = true,
+  })  : type = PutType.output,
         addPart = true;
 
   /// The name of the file
@@ -41,16 +43,26 @@ class Content {
   /// whether to add a part to the file
   final bool addPart;
 
+  /// whether to format the content
+  final bool format;
+
   static String? _content;
 
   /// The contents of the file as a string
   String get content {
     if (type == PutType.output) {
-      return _content ??=
-          outputContentFromTypes(fileName, _generators.map((e) => '$e'));
+      return _content ??= outputContentFromTypes(
+        fileName,
+        _generators.map((e) => '$e'),
+        format: format,
+      );
     }
 
-    return _content ??= inputContent(fileName, addPart: addPart);
+    return _content ??= inputContent(
+      fileName,
+      addPart: addPart,
+      format: format,
+    );
   }
 
   /// The contents of the file as a string, mapped by [filePath]
