@@ -90,6 +90,10 @@ class Content {
 
     var ext = _extension;
 
+    if (ext == '.dart') {
+      return '.g$ext';
+    }
+
     if (!ext.startsWith('.')) {
       ext = '.$ext';
     }
