@@ -10,11 +10,15 @@ Future<void> testPartGenerator(
   String fileName,
   Generator generator, {
   bool compareWithFixture = true,
+  String? inputDir,
+  String? fixtureDir,
 }) async {
   final codeGen = GeneratorPrep(
     fileName,
     generator,
     compareWithFixture: compareWithFixture,
+    inputDir: inputDir,
+    fixtureDir: fixtureDir,
   );
 
   await codeGen.test();
@@ -34,6 +38,8 @@ Future<void> testPackageBuilder(
   bool compareWithFixture = true,
   String? header,
   String? extension,
+  String? inputDir,
+  String? fixtureDir,
 }) async {
   final builderConfig =
       TestBuilderOptions(builderOptions ?? <String, dynamic>{});
@@ -44,6 +50,8 @@ Future<void> testPackageBuilder(
     compareWithFixture: compareWithFixture,
     header: header,
     extension: extension,
+    inputDir: inputDir,
+    fixtureDir: fixtureDir,
   );
 
   await codeGen.test();
