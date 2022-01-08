@@ -10,10 +10,10 @@ import 'package:generator_test/src/domain/domain.dart';
 String inputContent(
   String fileName, {
   bool addPart = false,
-  String? dirPath,
+  required String dirPath,
   required String extension,
 }) {
-  final path = '${dirPath ?? GeneratorPath.input}/$fileName.dart';
+  final path = '$dirPath/$fileName.dart';
 
   String? part;
 
@@ -39,9 +39,9 @@ String fixtureContent(
   String fileName, {
   String? generatorName,
   String? header,
-  String? dirPath,
+  required String dirPath,
 }) {
-  final path = '${dirPath ?? GeneratorPath.fixture}/$fileName.dart';
+  final path = '$dirPath/$fileName.dart';
 
   final fixture = getFileContent(path);
   final generatedHeader =
@@ -83,6 +83,7 @@ String getFileContent(
 
     final partRegex = RegExp(r"part .*';[\r\n]+");
 
+    // check for part with specific extension
     if (content.contains(partRegex)) {
       return content.replaceFirst(partRegex, part ?? '');
     }
