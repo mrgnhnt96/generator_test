@@ -9,7 +9,7 @@ class GeneratorPrep {
   GeneratorPrep(
     this.fileName,
     this.generator, {
-    this.compareWithOutput = false,
+    this.compareWithfixture = false,
   })  : _builder = null,
         extension = null,
         header = null;
@@ -18,7 +18,7 @@ class GeneratorPrep {
   GeneratorPrep.fromBuilder(
     this.fileName,
     this._builder, {
-    this.compareWithOutput = false,
+    this.compareWithfixture = false,
     this.header,
     this.extension,
   }) : generator = null;
@@ -31,13 +31,13 @@ class GeneratorPrep {
 
   final Builder? _builder;
 
-  /// compares the input content with the generated output
+  /// compares the input content with the generated fixture
   ///
   /// if false, the test will pass if the generated
-  /// output contains no generated errors
-  final bool compareWithOutput;
+  /// fixture contains no generated errors
+  final bool compareWithfixture;
 
-  /// the header to use for the generated output
+  /// the header to use for the generated fixture
   final String? header;
 
   /// the extension of the generated file
@@ -51,13 +51,13 @@ class GeneratorPrep {
   Content get _inContent {
     return Content(
       fileName,
-      addPart: compareWithOutput,
+      addPart: compareWithfixture,
       extension: extension,
     );
   }
 
-  Content get _outContent {
-    return Content.output(
+  Content get _fixtureContent {
+    return Content.fixture(
       fileName,
       generator,
       header: header,
@@ -67,15 +67,15 @@ class GeneratorPrep {
 
   /// the input files for the test
   Map<String, String> get inputs {
-    return _puts(_inContent);
+    return _toMap(_inContent);
   }
 
-  /// the output files for the test
-  Map<String, String> get outputs {
-    return compareWithOutput ? _puts(_outContent) : {};
+  /// the fixture files for the test
+  Map<String, String> get fixtures {
+    return compareWithfixture ? _toMap(_fixtureContent) : {};
   }
 
-  Map<String, String> _puts(Content put) {
+  Map<String, String> _toMap(Content put) {
     return {put.filePath: put.content};
   }
 
@@ -107,7 +107,7 @@ class GeneratorPrep {
     await testBuilder(
       builder,
       inputs,
-      outputs: outputs,
+      outputs: fixtures,
       onLog: print,
       isInput: isInput,
       reader: await reader,

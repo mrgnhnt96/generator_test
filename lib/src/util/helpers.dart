@@ -28,36 +28,36 @@ String inputContent(
   return content;
 }
 
-/// Retrieves the file content from the [GeneratorPath.output]/[fileName].dart file.
+/// Retrieves the file content from the [GeneratorPath.fixture]/[fileName].dart file.
 ///
 /// Automatically adds
 /// - `part of '[fileName].dart';`
 /// - `// GENERATED CODE - DO NOT MODIFY BY HAND`
 /// - Generator's name (`T`) comment
-String outputContent(
+String fixtureContent(
   String fileName,
   String? generatorName,
   String? header,
 ) {
-  final path = '${GeneratorPath.output}/$fileName.dart';
+  final path = '${GeneratorPath.fixture}/$fileName.dart';
 
-  final output = getFileContent(path);
+  final fixture = getFileContent(path);
   final generatedHeader =
       header ?? '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
 
   final part = "part of '$fileName.dart';\n";
 
   final generator = '''
-// **************************************************************************
+${'// '.padRight(77, '*')}
 // $generatorName
-// **************************************************************************
+${'// '.padRight(77, '*')}
 ''';
 
   final result = [
     generatedHeader,
     part,
     if (generatorName != null) generator,
-    output,
+    fixture,
   ].join('\n');
 
   return result;

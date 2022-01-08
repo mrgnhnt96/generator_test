@@ -1,13 +1,13 @@
 import 'package:generator_test/src/util/util.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// Input/Output type for [Content] of the generator
+/// Input/fixture type for [Content] of the generator
 enum PutType {
   /// content that is an input to the generator
   input,
 
-  /// content that is an output from the generator
-  output,
+  /// content that is an fixture from the generator
+  fixture,
 }
 
 /// {@template content}
@@ -27,12 +27,12 @@ class Content {
   /// {@macro content}
   ///
   /// Formats the contents as a generated file
-  Content.output(
+  Content.fixture(
     this.fileName,
     this._generator, {
     this.header,
     String? extension,
-  })  : type = PutType.output,
+  })  : type = PutType.fixture,
         _extension = extension ?? '.g.dart',
         addPart = true;
 
@@ -40,13 +40,13 @@ class Content {
   final String fileName;
   final Generator? _generator;
 
-  /// If the content is input or output
+  /// If the content is input or fixture
   final PutType type;
 
   /// whether to add a part to the file
   final bool addPart;
 
-  /// the header of the output file
+  /// the header of the fixture file
   final String? header;
   final String _extension;
 
@@ -54,8 +54,8 @@ class Content {
 
   /// The contents of the file as a string
   String get content {
-    if (type == PutType.output) {
-      return _content ??= outputContent(
+    if (type == PutType.fixture) {
+      return _content ??= fixtureContent(
         fileName,
         _generator?.toString(),
         header,
@@ -65,7 +65,7 @@ class Content {
     return _content ??= inputContent(
       fileName,
       addPart: addPart,
-      extension: extension(getOutput: true),
+      extension: extension(getfixture: true),
     );
   }
 
@@ -83,8 +83,8 @@ class Content {
   String get filePath => '$lib$fileName${extension()}';
 
   /// The extension of the file
-  String extension({bool getOutput = false}) {
-    if (type == PutType.input && !getOutput) {
+  String extension({bool getfixture = false}) {
+    if (type == PutType.input && !getfixture) {
       return '.dart';
     }
 
