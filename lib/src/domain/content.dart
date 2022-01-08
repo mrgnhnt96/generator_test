@@ -18,6 +18,7 @@ class Content {
   Content(
     this.fileName, {
     required this.addPart,
+    required this.directory,
     String? extension,
   })  : type = PutType.input,
         header = null,
@@ -31,6 +32,7 @@ class Content {
     this.fileName,
     this._generator, {
     this.header,
+    required this.directory,
     String? extension,
   })  : type = PutType.fixture,
         _extension = extension ?? '.g.dart',
@@ -50,6 +52,9 @@ class Content {
   final String? header;
   final String _extension;
 
+  /// the directory of the file
+  final String directory;
+
   String? _content;
 
   /// The contents of the file as a string
@@ -59,6 +64,7 @@ class Content {
         fileName,
         generatorName: _generator?.toString(),
         header: header,
+        dirPath: directory,
       );
     }
 
@@ -66,6 +72,7 @@ class Content {
       fileName,
       addPart: addPart,
       extension: extension(getfixture: true),
+      dirPath: directory,
     );
   }
 
