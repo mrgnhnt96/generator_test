@@ -5,5 +5,5 @@ import 'package:build/build.dart';
 /// {@endtemplate}
 class TestBuilderOptions extends BuilderOptions {
   /// {@macro test_builder_options}
-  TestBuilderOptions(Map<String, dynamic> config) : super(config);
+  const TestBuilderOptions(Map<String, dynamic> config) : super(config);
 }
