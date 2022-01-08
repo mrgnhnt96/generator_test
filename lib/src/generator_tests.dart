@@ -9,12 +9,12 @@ import 'package:source_gen/source_gen.dart';
 Future<void> testPartGenerator(
   String fileName,
   Generator generator, {
-  bool compareWithfixture = true,
+  bool compareWithFixture = true,
 }) async {
   final codeGen = GeneratorPrep(
     fileName,
     generator,
-    compareWithfixture: compareWithfixture,
+    compareWithFixture: compareWithFixture,
   );
 
   await codeGen.test();
@@ -31,7 +31,7 @@ Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
   required GetBuilder builder,
-  bool compareWithfixture = true,
+  bool compareWithFixture = true,
   String? header,
   String? extension,
 }) async {
@@ -41,7 +41,7 @@ Future<void> testPackageBuilder(
   final codeGen = GeneratorPrep.fromBuilder(
     fileName,
     builder(builderConfig),
-    compareWithfixture: compareWithfixture,
+    compareWithFixture: compareWithFixture,
     header: header,
     extension: extension,
   );

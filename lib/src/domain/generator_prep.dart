@@ -9,7 +9,7 @@ class GeneratorPrep {
   GeneratorPrep(
     this.fileName,
     this.generator, {
-    this.compareWithfixture = false,
+    this.compareWithFixture = false,
   })  : _builder = null,
         extension = null,
         header = null;
@@ -18,7 +18,7 @@ class GeneratorPrep {
   GeneratorPrep.fromBuilder(
     this.fileName,
     this._builder, {
-    this.compareWithfixture = false,
+    this.compareWithFixture = false,
     this.header,
     this.extension,
   }) : generator = null;
@@ -35,7 +35,7 @@ class GeneratorPrep {
   ///
   /// if false, the test will pass if the generated
   /// fixture contains no generated errors
-  final bool compareWithfixture;
+  final bool compareWithFixture;
 
   /// the header to use for the generated fixture
   final String? header;
@@ -51,7 +51,7 @@ class GeneratorPrep {
   Content get _inContent {
     return Content(
       fileName,
-      addPart: compareWithfixture,
+      addPart: compareWithFixture,
       extension: extension,
     );
   }
@@ -72,7 +72,7 @@ class GeneratorPrep {
 
   /// the fixture files for the test
   Map<String, String> get fixtures {
-    return compareWithfixture ? _toMap(_fixtureContent) : {};
+    return compareWithFixture ? _toMap(_fixtureContent) : {};
   }
 
   Map<String, String> _toMap(Content put) {
