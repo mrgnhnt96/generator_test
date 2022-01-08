@@ -10,8 +10,12 @@ class GeneratorPrep {
     this.fileName,
     this.generator, {
     this.compareWithFixture = false,
+    String? inputDir,
+    String? fixtureDir,
   })  : _builder = null,
         extension = null,
+        inputDir = inputDir ?? GeneratorPath.input,
+        fixtureDir = fixtureDir ?? GeneratorPath.fixture,
         header = null;
 
   /// uses the provided builder and files for testing
@@ -21,7 +25,11 @@ class GeneratorPrep {
     this.compareWithFixture = false,
     this.header,
     this.extension,
-  }) : generator = null;
+    String? inputDir,
+    String? fixtureDir,
+  })  : generator = null,
+        inputDir = inputDir ?? GeneratorPath.input,
+        fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
   /// the names of the files to test
   final String fileName;
@@ -43,6 +51,12 @@ class GeneratorPrep {
   /// the extension of the generated file
   final String? extension;
 
+  /// the directory to use for the input files
+  final String inputDir;
+
+  /// the directory to use for the generated fixture
+  final String fixtureDir;
+
   /// the builder for the test
   Builder get builder {
     return _builder ?? PartBuilder([generator!], '.g.dart');
@@ -53,6 +67,7 @@ class GeneratorPrep {
       fileName,
       addPart: compareWithFixture,
       extension: extension,
+      directory: inputDir,
     );
   }
 
@@ -62,6 +77,7 @@ class GeneratorPrep {
       generator,
       header: header,
       extension: extension,
+      directory: fixtureDir,
     );
   }
 
