@@ -10,9 +10,10 @@ import 'package:generator_test/src/domain/domain.dart';
 String inputContent(
   String fileName, {
   bool addPart = false,
+  String? dirPath,
   required String extension,
 }) {
-  final path = '${GeneratorPath.input}/$fileName.dart';
+  final path = '${dirPath ?? GeneratorPath.input}/$fileName.dart';
 
   String? part;
 
@@ -35,11 +36,12 @@ String inputContent(
 /// - `// GENERATED CODE - DO NOT MODIFY BY HAND`
 /// - Generator's name (`T`) comment
 String fixtureContent(
-  String fileName,
+  String fileName, {
   String? generatorName,
   String? header,
-) {
-  final path = '${GeneratorPath.fixture}/$fileName.dart';
+  String? dirPath,
+}) {
+  final path = '${dirPath ?? GeneratorPath.fixture}/$fileName.dart';
 
   final fixture = getFileContent(path);
   final generatedHeader =

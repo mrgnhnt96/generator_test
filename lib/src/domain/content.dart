@@ -57,8 +57,8 @@ class Content {
     if (type == PutType.fixture) {
       return _content ??= fixtureContent(
         fileName,
-        _generator?.toString(),
-        header,
+        generatorName: _generator?.toString(),
+        header: header,
       );
     }
 
