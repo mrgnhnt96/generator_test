@@ -1,8 +1,7 @@
 ///
 class GeneratorPath {
-  static const _defaultPath = 'test/generator';
-  static const _defaultInput = '$_defaultPath/input';
-  static const _defaultfixture = '$_defaultPath/fixture';
+  static const _defaultInput = 'test/fixture';
+  static const _defaultfixture = 'test/fixture/fixtures';
 
   static var _inputPath = _defaultInput;
   static var _fixturePath = _defaultfixture;
@@ -21,7 +20,7 @@ class GeneratorPath {
   ///
   /// [input] defaults to: `test/generator/input`\
   /// [fixture] defaults to: `test/generator/fixture`
-  static void setDirPath({
+  static void setDirectory({
     String? input,
     String? fixture,
   }) {
