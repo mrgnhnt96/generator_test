@@ -15,15 +15,12 @@ String inputContent(
 }) {
   final path = '$dirPath/$fileName.dart';
 
-  String? part;
-
-  if (addPart) {
-    part = "part '$fileName$extension';";
-  }
+  final part = "part '$fileName$extension';";
 
   final content = getFileContent(
     path,
     part: part,
+    addPart: addPart,
   );
 
   return content;
@@ -38,40 +35,21 @@ String inputContent(
 String fixtureContent(
   String fileName, {
   String? generatorName,
-  String? header,
   required String dirPath,
 }) {
   final path = '$dirPath/$fileName.dart';
 
-  final fixture = getFileContent(path);
-  final generatedHeader =
-      header ?? '// GENERATED CODE - DO NOT MODIFY BY HAND\n';
+  final fixture = getFileContent(path, part: "part of '$fileName.dart';\n\n");
 
-  final part = "part of '$fileName.dart';\n";
-
-  final generator = '''
-${'// '.padRight(77, '*')}
-// $generatorName
-${'// '.padRight(77, '*')}
-''';
-
-  final result = [
-    generatedHeader,
-    part,
-    if (generatorName != null) generator,
-    fixture,
-  ].join('\n');
-
-  return result;
+  return fixture;
 }
 
 /// gets the file's content from the given [path].
 String getFileContent(
   String path, {
-  String? part,
+  required String part,
+  bool addPart = true,
 }) {
-  part = part == null ? '' : '$part\n\n';
-
   String getContent() {
     final file = File(path);
 
@@ -81,19 +59,19 @@ String getFileContent(
 
     final content = file.readAsStringSync();
 
+    if (!addPart) {
+      return content;
+    }
+
     final partRegex = RegExp(r"part .*';[\r\n]+");
 
     // check for part with specific extension
     if (content.contains(partRegex)) {
-      return content.replaceFirst(partRegex, part ?? '');
+      return content.replaceFirst(partRegex, part);
     }
 
     if (!content.contains(RegExp('import .*;'))) {
-      return [part ?? '', content].join();
-    }
-
-    if (part == null) {
-      return content;
+      return [part, content].join();
     }
 
     final lines = content.split('\n');
