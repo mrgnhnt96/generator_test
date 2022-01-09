@@ -12,24 +12,24 @@ class GeneratorPrep {
     this.compareWithFixture = false,
     String? inputDir,
     String? fixtureDir,
-    this.fixtureFileName,
+    String? fixtureFileName,
   })  : _builder = null,
+        fixtureFileName = fixtureFileName ?? fileName,
         extension = null,
         inputDir = inputDir ?? GeneratorPath.input,
-        fixtureDir = fixtureDir ?? GeneratorPath.fixture,
-        header = null;
+        fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
   /// uses the provided builder and files for testing
   GeneratorPrep.fromBuilder(
     this.fileName,
     this._builder, {
     this.compareWithFixture = false,
-    this.header,
     this.extension,
     String? inputDir,
     String? fixtureDir,
-    this.fixtureFileName,
+    String? fixtureFileName,
   })  : generator = null,
+        fixtureFileName = fixtureFileName ?? fileName,
         inputDir = inputDir ?? GeneratorPath.input,
         fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
@@ -47,9 +47,6 @@ class GeneratorPrep {
   /// fixture contains no generated errors
   final bool compareWithFixture;
 
-  /// the header to use for the generated fixture
-  final String? header;
-
   /// the extension of the generated file
   final String? extension;
 
@@ -60,7 +57,7 @@ class GeneratorPrep {
   final String fixtureDir;
 
   /// the fixture file name. [fileName] is used if not set
-  final String? fixtureFileName;
+  final String fixtureFileName;
 
   /// the builder for the test
   Builder get builder {
@@ -78,9 +75,8 @@ class GeneratorPrep {
 
   Content get _fixtureContent {
     return Content.fixture(
-      fixtureFileName ?? fileName,
+      fixtureFileName,
       generator,
-      header: header,
       extension: extension,
       directory: fixtureDir,
     );

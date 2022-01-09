@@ -21,7 +21,6 @@ class Content {
     required this.directory,
     String? extension,
   })  : type = PutType.input,
-        header = null,
         _extension = extension ?? '.dart',
         _generator = null;
 
@@ -31,7 +30,6 @@ class Content {
   Content.fixture(
     this.fileName,
     this._generator, {
-    this.header,
     required this.directory,
     String? extension,
   })  : type = PutType.fixture,
@@ -48,8 +46,6 @@ class Content {
   /// whether to add a part to the file
   final bool addPart;
 
-  /// the header of the fixture file
-  final String? header;
   final String _extension;
 
   /// the directory of the file
@@ -63,7 +59,6 @@ class Content {
       return _content ??= fixtureContent(
         fileName,
         generatorName: _generator?.toString(),
-        header: header,
         dirPath: directory,
       );
     }
