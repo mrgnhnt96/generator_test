@@ -75,8 +75,8 @@ class GeneratorPrep {
 
   Content get _fixtureContent {
     return Content.fixture(
-      fixtureFileName,
-      generator,
+      fileName,
+      fromFileName: fixtureFileName,
       extension: extension,
       directory: fixtureDir,
     );
