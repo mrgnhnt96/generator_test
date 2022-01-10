@@ -1,5 +1,4 @@
 import 'package:generator_test/src/util/util.dart';
-import 'package:source_gen/source_gen.dart';
 
 /// Input/fixture type for [Content] of the generator
 enum PutType {
@@ -21,24 +20,24 @@ class Content {
     required this.directory,
     String? extension,
   })  : type = PutType.input,
-        _extension = extension ?? '.dart',
-        _generator = null;
+        fromFileName = fileName,
+        _extension = extension ?? '.dart';
 
   /// {@macro content}
   ///
   /// Formats the contents as a generated file
   Content.fixture(
-    this.fileName,
-    this._generator, {
+    this.fileName, {
+    String? fromFileName,
     required this.directory,
     String? extension,
   })  : type = PutType.fixture,
+        fromFileName = fromFileName ?? fileName,
         _extension = extension ?? '.g.dart',
         addPart = true;
 
   /// The name of the file
   final String fileName;
-  final Generator? _generator;
 
   /// If the content is input or fixture
   final PutType type;
@@ -51,20 +50,22 @@ class Content {
   /// the directory of the file
   final String directory;
 
+  /// the file to use as the source of the file
+  final String fromFileName;
+
   String? _content;
 
   /// The contents of the file as a string
   String get content {
     if (type == PutType.fixture) {
       return _content ??= fixtureContent(
-        fileName,
-        generatorName: _generator?.toString(),
+        fromFileName,
         dirPath: directory,
       );
     }
 
     return _content ??= inputContent(
-      fileName,
+      fromFileName,
       addPart: addPart,
       extension: extension(getfixture: true),
       dirPath: directory,
