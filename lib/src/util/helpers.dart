@@ -34,9 +34,10 @@ String inputContent(
 /// - Generator's name (`T`) comment
 String fixtureContent(
   String fileName, {
+  required String fromFileName,
   required String dirPath,
 }) {
-  final path = '$dirPath/$fileName.dart';
+  final path = '$dirPath/$fromFileName.dart';
 
   final fixture = getFileContent(path, part: "part of '$fileName.dart';\n\n");
 

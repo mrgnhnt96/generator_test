@@ -59,7 +59,8 @@ class Content {
   String get content {
     if (type == PutType.fixture) {
       return _content ??= fixtureContent(
-        fromFileName,
+        fileName,
+        fromFileName: fromFileName,
         dirPath: directory,
       );
     }
