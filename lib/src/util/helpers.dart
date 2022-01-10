@@ -34,7 +34,6 @@ String inputContent(
 /// - Generator's name (`T`) comment
 String fixtureContent(
   String fileName, {
-  String? generatorName,
   required String dirPath,
 }) {
   final path = '$dirPath/$fileName.dart';
