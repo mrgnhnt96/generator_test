@@ -21,7 +21,7 @@ class Content {
     String? extension,
   })  : type = PutType.input,
         fromFileName = fileName,
-        _extension = extension ?? '.dart';
+        _extension = extension;
 
   /// {@macro content}
   ///
@@ -33,7 +33,7 @@ class Content {
     String? extension,
   })  : type = PutType.fixture,
         fromFileName = fromFileName ?? fileName,
-        _extension = extension ?? '.g.dart',
+        _extension = extension,
         addPart = true;
 
   /// The name of the file
@@ -45,7 +45,7 @@ class Content {
   /// whether to add a part to the file
   final bool addPart;
 
-  final String _extension;
+  final String? _extension;
 
   /// the directory of the file
   final String directory;
@@ -93,6 +93,10 @@ class Content {
     }
 
     var ext = _extension;
+
+    if (ext == null) {
+      return '.g.dart';
+    }
 
     if (ext == '.dart') {
       return '.g$ext';

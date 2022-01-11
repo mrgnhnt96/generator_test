@@ -15,7 +15,7 @@ class GeneratorPrep {
     String? fixtureFileName,
   })  : _builder = null,
         fixtureFileName = fixtureFileName ?? fileName,
-        extension = null,
+        _extension = null,
         inputDir = inputDir ?? GeneratorPath.input,
         fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
@@ -24,11 +24,12 @@ class GeneratorPrep {
     this.fileName,
     this._builder, {
     this.compareWithFixture = false,
-    this.extension,
+    String? extension,
     String? inputDir,
     String? fixtureDir,
     String? fixtureFileName,
   })  : generator = null,
+        _extension = extension,
         fixtureFileName = fixtureFileName ?? fileName,
         inputDir = inputDir ?? GeneratorPath.input,
         fixtureDir = fixtureDir ?? GeneratorPath.fixture;
@@ -48,7 +49,13 @@ class GeneratorPrep {
   final bool compareWithFixture;
 
   /// the extension of the generated file
-  final String? extension;
+  ///
+  /// If null, the extension is pulled from the builder extension list\
+  /// Throws error if `builder.buildExtensions` is empty or
+  /// has more than one element
+  String? get extension =>
+      _extension ?? builder.buildExtensions.values.single.first;
+  final String? _extension;
 
   /// the directory to use for the input files
   final String inputDir;
