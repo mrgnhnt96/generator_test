@@ -1,6 +1,7 @@
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
-import 'package:generator_test/src/domain/domain.dart';
+import 'package:generator_test/src/domain/content.dart';
+import 'package:generator_test/src/domain/generator_path.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Prepares the generator and files for testing
