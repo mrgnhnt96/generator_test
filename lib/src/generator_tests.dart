@@ -1,11 +1,10 @@
 // ignore_for_file: avoid_field_initializers_in_const_classes, recursive_getters
 
 import 'package:build/build.dart';
-import 'package:generator_test/src/domain/domain.dart';
-import 'package:generator_test/src/util/util.dart';
+import 'package:generator_test/src/domain/generator_prep.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// Run test with code generated from [inputContent]
+/// Run test with code generated from the [fileName] file
 Future<void> testPartGenerator(
   String fileName,
   Generator generator, {
@@ -30,9 +29,6 @@ Future<void> testPartGenerator(
 typedef GetBuilder = Builder Function(BuilderOptions options);
 
 /// runs test for the Generator(s) with the given [builder]
-///
-/// !! If your [builder] contains a header, make sure to include it in
-/// the fixture file.
 Future<void> testPackageBuilder(
   String fileName, {
   Map<String, dynamic>? builderOptions,
@@ -43,8 +39,7 @@ Future<void> testPackageBuilder(
   String? fixtureDir,
   String? fixtureFileName,
 }) async {
-  final builderConfig =
-      TestBuilderOptions(builderOptions ?? <String, dynamic>{});
+  final builderConfig = BuilderOptions(builderOptions ?? <String, dynamic>{});
 
   final codeGen = GeneratorPrep.fromBuilder(
     fileName,
