@@ -24,10 +24,7 @@ class GeneratorPath {
     String? input,
     String? fixture,
   }) {
-    input ??= _defaultInput;
-    fixture ??= _defaultfixture;
-
-    _inputPath = input;
-    _fixturePath = fixture;
+    _inputPath = input ?? _defaultInput;
+    _fixturePath = fixture ?? _defaultfixture;
   }
 }
