@@ -118,6 +118,11 @@ class Content with GetContentMixin {
 
     return ext;
   }
+
+  /// returns the contents of the files mapped by the file path
+  Map<String, String> toMap() {
+    return <String, String>{filePath: content};
+  }
 }
 
 /// Methods to get the contents of a file
@@ -135,13 +140,15 @@ mixin GetContentMixin {
 
     final part = "part '$fileName$extension';";
 
-    final content = _getFileContent(
-      path,
-      part: part,
-      addPart: addPart,
-    );
+    final content = getFileContent(path);
 
-    return content;
+    if (!addPart) {
+      return content;
+    }
+
+    final input = updatePart(content, part);
+
+    return input;
   }
 
   /// Retrieves the file content from the [GeneratorPath.fixture]/[fileName].dart file.
@@ -157,56 +164,48 @@ mixin GetContentMixin {
   }) {
     final path = '$dirPath/$fromFileName.dart';
 
-    final fixture =
-        _getFileContent(path, part: "part of '$fileName.dart';\n\n");
+    final content = getFileContent(path);
+
+    final fixture = updatePart(content, "part of '$fileName.dart';\n\n");
 
     return fixture;
   }
 
   /// gets the file's content from the given [path].
-  String _getFileContent(
-    String path, {
-    required String part,
-    bool addPart = true,
-  }) {
-    String getContent() {
-      final file = File(path);
+  String getFileContent(String path) {
+    final file = File(path);
 
-      if (!file.existsSync()) {
-        throw Exception('File not found: $path');
-      }
-
-      final content = file.readAsStringSync();
-
-      if (!addPart) {
-        return content;
-      }
-
-      final partRegex = RegExp(r"part .*';[\r\n]+");
-
-      // check for part with specific extension
-      if (content.contains(partRegex)) {
-        return content.replaceFirst(partRegex, part);
-      }
-
-      if (!content.contains(RegExp('import .*;'))) {
-        return [part, content].join();
-      }
-
-      final lines = content.split('\n');
-      final indexAfterImport = lines.indexWhere(
-        (line) =>
-            !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
-            line.isNotEmpty,
-      );
-
-      lines.insert(indexAfterImport, part);
-
-      return lines.join('\n');
+    if (!file.existsSync()) {
+      throw Exception('File not found: $path');
     }
 
-    final result = getContent();
+    final content = file.readAsStringSync();
 
-    return result;
+    return content;
+  }
+
+  /// Adds or updates the [part] to the [content]
+  String updatePart(String content, String part) {
+    final partRegex = RegExp(r"part .*';[\r\n]+");
+
+    // check for part with specific extension
+    if (content.contains(partRegex)) {
+      return content.replaceFirst(partRegex, part);
+    }
+
+    if (!content.contains(RegExp('import .*;'))) {
+      return [part, content].join();
+    }
+
+    final lines = content.split('\n');
+    final indexAfterImport = lines.indexWhere(
+      (line) =>
+          !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
+          line.isNotEmpty,
+    );
+
+    lines.insert(indexAfterImport, part);
+
+    return lines.join('\n');
   }
 }
