@@ -72,7 +72,8 @@ class GeneratorPrep {
     return _builder ?? PartBuilder([generator!], '.g.dart');
   }
 
-  Content get _inContent {
+  /// the content from the input file
+  Content get inputContent {
     return Content(
       fileName,
       addPart: compareWithFixture,
@@ -81,7 +82,12 @@ class GeneratorPrep {
     );
   }
 
-  Content get _fixtureContent {
+  /// the content from the fixture file
+  Content? fixtureContent() {
+    if (!compareWithFixture) {
+      return null;
+    }
+
     return Content.fixture(
       fileName,
       fromFileName: fixtureFileName,
@@ -90,52 +96,14 @@ class GeneratorPrep {
     );
   }
 
-  /// the input files for the test
-  Map<String, String> get inputs {
-    return _toMap(_inContent);
-  }
-
-  /// the fixture files for the test
-  Map<String, String> get fixtures {
-    return compareWithFixture ? _toMap(_fixtureContent) : {};
-  }
-
-  Map<String, String> _toMap(Content put) {
-    return {put.filePath: put.content};
-  }
-
-  MultiPackageAssetReader? _reader;
-
-  /// the asset reader for the test
-  Future<MultiPackageAssetReader> get reader async {
-    return _reader ??= await PackageAssetReader.currentIsolate();
-  }
-
-  /// checks if the path is a provided input file
-  bool isInput(String path) {
-    if (!path.contains('.dart')) {
-      return false;
-    }
-
-    final extStart = path.indexOf('.');
-    if (extStart == -1) {
-      return false;
-    }
-
-    final file = path.substring(0, extStart).replaceAll(Content.lib, '');
-
-    return fileName.contains(file);
-  }
-
   /// tests the generator
   Future<void> test() async {
     await testBuilder(
       builder,
-      inputs,
-      outputs: fixtures,
+      inputContent.toMap(),
+      outputs: fixtureContent()?.toMap(),
       onLog: print,
-      isInput: isInput,
-      reader: await reader,
+      reader: await PackageAssetReader.currentIsolate(),
     );
   }
 }
