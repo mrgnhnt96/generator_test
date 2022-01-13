@@ -22,7 +22,6 @@ extension on Content {
 void main() {
   Content getContent({
     String? fileName,
-    bool? addPart,
     String? extension,
     bool isFixture = false,
   }) {
@@ -35,7 +34,6 @@ void main() {
     }
     return Content(
       fileName ?? 'fileName',
-      addPart: addPart ?? true,
       directory: 'directory',
       extension: extension ?? '.dart',
     );
@@ -207,7 +205,6 @@ void main() {
     }) {
       return content.inputContent(
         content.fileName,
-        addPart: addPart,
         dirPath: content.directory,
         extension: extension ?? content.extension(),
       );

@@ -19,7 +19,6 @@ class Content with GetContentMixin {
   /// {@macro content}
   Content(
     String fileName, {
-    required this.addPart,
     required this.directory,
     String? extension,
   })  : type = PutType.input,
@@ -38,8 +37,7 @@ class Content with GetContentMixin {
   })  : type = PutType.fixture,
         fromFileName = fromFileName ?? fileName,
         _fileName = fileName,
-        _extension = extension,
-        addPart = true;
+        _extension = extension;
 
   final String _fileName;
 
@@ -56,9 +54,6 @@ class Content with GetContentMixin {
 
   /// If the content is input or fixture
   final PutType type;
-
-  /// whether to add a part to the file
-  final bool addPart;
 
   final String? _extension;
 
@@ -80,7 +75,6 @@ class Content with GetContentMixin {
 
     return inputContent(
       fromFileName,
-      addPart: addPart,
       extension: extension(useFixturePart: true),
       dirPath: directory,
     );
@@ -140,11 +134,8 @@ mixin GetContentMixin {
   File? file;
 
   /// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
-  ///
-  /// [addPart] adds `part '[fileName].g.dart';' to the file after imports
   String inputContent(
     String fileName, {
-    bool addPart = false,
     required String dirPath,
     required String extension,
   }) {
@@ -153,10 +144,6 @@ mixin GetContentMixin {
     final part = "part '$fileName$extension';";
 
     final content = getFileContent(path);
-
-    if (!addPart) {
-      return content;
-    }
 
     final input = updatePart(content, part);
 
