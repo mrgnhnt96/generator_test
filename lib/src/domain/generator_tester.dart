@@ -13,7 +13,6 @@ class GeneratorTester {
   GeneratorTester(
     this.fileName,
     this.generator, {
-    Map<String, dynamic>? options,
     this.compareWithFixture = false,
     String? inputDir,
     String? fixtureDir,
@@ -21,7 +20,7 @@ class GeneratorTester {
   })  : _builder = null,
         fixtureFileName = fixtureFileName ?? fileName,
         _extension = null,
-        _options = options,
+        _options = null,
         inputDir = inputDir ?? GeneratorPath.input,
         fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
