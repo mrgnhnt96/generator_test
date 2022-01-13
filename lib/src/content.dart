@@ -185,7 +185,7 @@ mixin GetContentMixin {
 
   /// Adds or updates the [part] to the [content]
   String updatePart(String content, String part) {
-    final partRegex = RegExp("^part .*';");
+    final partRegex = RegExp("^part .*';", multiLine: true);
 
     // check for part with specific extension
     if (content.contains(partRegex)) {

@@ -258,19 +258,60 @@ void main() {
 
     group('#updatePart', () {
       test('should replace the part with provided', () {
-        const fakePart = "part of 'fakeFileContent.dart';";
+        const fakeFileName = 'fakeFileContent.dart';
+        const fakeContents = [
+          "part of '$fakeFileName';",
+          '''
+import 'package:ministy/magic.dart';
 
-        const parts = [
-          "part 'vol.de.dart';",
-          "part of 'vol.de.dart';",
-          "part './you/know/who.dart';",
-          "part of '../he/who/should/not/be.named.dart';",
+part '$fakeFileName';
+''',
+          '''
+// some comment
+
+part of './$fakeFileName';
+''',
+          '''
+import 'package:ministy/magic.dart';
+
+import 'package:ministy/magic.dart';
+
+part './$fakeFileName';
+''',
+          '''
+import 'package:ministy/magic.dart';
+// some comment
+import 'package:ministy/magic.dart';
+
+part of '$fakeFileName';
+''',
+          '''
+import 'package:ministy/magic.dart';
+
+// some comment
+import 'package:ministy/magic.dart';
+
+part of '$fakeFileName';
+''',
+          '''
+import 'package:ministy/magic.dart';
+
+// some comment
+import 'package:ministy/magic.dart';
+
+part of '$fakeFileName';
+
+class DartCode {}
+''',
         ];
 
-        for (final part in parts) {
-          final result = content.updatePart(fakePart, part);
+        const part = "part 'vol.de.dart';";
+
+        for (final fakeContent in fakeContents) {
+          final result = content.updatePart(fakeContent, part);
 
           expect(result, contains(part));
+          expect(result, isNot(contains(fakeFileName)));
         }
       });
 
@@ -294,6 +335,7 @@ void main() {
       test('should add the part with provided after imports', () {
         const fakeContents = [
           "import 'package:ministy/magic.dart';",
+          '// some comment',
           '''
 import 'package:ministy/magic.dart';
 
