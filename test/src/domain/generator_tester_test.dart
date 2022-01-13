@@ -34,7 +34,7 @@ void main() {
   }) {
     return GeneratorTester.fromBuilder(
       fileName ?? 'fileName',
-      FakeBuilder(extension: builderExtension),
+      (_) => FakeBuilder(extension: builderExtension),
       inputDir: inputDir,
       fixtureDir: fixtureDir,
       compareWithFixture: compareWithFixture,
