@@ -1,29 +1,29 @@
 import 'package:build/build.dart';
 import 'package:generator_test/src/content.dart';
-import 'package:generator_test/src/generator_tester.dart';
+import 'package:generator_test/src/success_generator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
 
 void main() {
-  GeneratorTester generator({
+  SuccessGenerator generator({
     String? fileName,
     String? inputDir,
     String? fixtureDir,
     bool compareWithFixture = true,
     String? fixtureFileName,
   }) {
-    return GeneratorTester(
+    return SuccessGenerator(
       fileName ?? 'fileName',
       MockGenerator(),
-      inputDir: inputDir,
-      fixtureDir: fixtureDir,
+      inputDir: inputDir ?? 'test/fixture',
+      fixtureDir: fixtureDir ?? 'test/fixture/fixtures',
       compareWithFixture: compareWithFixture,
       fixtureFileName: fixtureFileName,
     );
   }
 
-  GeneratorTester builder({
+  SuccessGenerator builder({
     String? fileName,
     String? inputDir,
     String? fixtureDir,
@@ -32,11 +32,11 @@ void main() {
     String? extension,
     String? builderExtension,
   }) {
-    return GeneratorTester.fromBuilder(
+    return SuccessGenerator.fromBuilder(
       fileName ?? 'fileName',
       (_) => FakeBuilder(extension: builderExtension),
-      inputDir: inputDir,
-      fixtureDir: fixtureDir,
+      inputDir: inputDir ?? 'test/fixture',
+      fixtureDir: fixtureDir ?? 'test/fixture/fixtures',
       compareWithFixture: compareWithFixture,
       fixtureFileName: fixtureFileName,
       extension: extension,
@@ -157,7 +157,7 @@ void main() {
   });
 }
 
-class FakeGeneratorTester extends Fake implements GeneratorTester {
+class FakeGeneratorTester extends Fake implements SuccessGenerator {
   @override
   Future<void> test() => Future.value();
 }

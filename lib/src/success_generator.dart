@@ -3,7 +3,6 @@
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/content.dart';
-import 'package:generator_test/src/generator_path.dart';
 import 'package:logging/src/level.dart';
 import 'package:logging/src/log_record.dart';
 import 'package:logging/src/logger.dart';
@@ -15,15 +14,18 @@ typedef GetBuilder = Builder Function(BuilderOptions options);
 /// the method to be called during the build phase & the logger is used
 typedef OnLog = void Function(LogRecord);
 
+const _defaultInputDir = 'test/fixture';
+const _defaultFixtureDir = 'test/fixture/fixtures';
+
 /// Prepares the generator and files for testing
-class GeneratorTester {
+class SuccessGenerator {
   /// prepares the generator and file for testing
-  GeneratorTester(
+  SuccessGenerator(
     this.fileName,
     this.generator, {
     this.compareWithFixture = true,
-    String? inputDir,
-    String? fixtureDir,
+    this.inputDir = _defaultInputDir,
+    this.fixtureDir = _defaultFixtureDir,
     String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
@@ -32,19 +34,17 @@ class GeneratorTester {
         _logLevel = logLevel,
         fixtureFileName = fixtureFileName ?? fileName,
         _extension = null,
-        _options = null,
-        inputDir = inputDir ?? GeneratorPath.input,
-        fixtureDir = fixtureDir ?? GeneratorPath.fixture;
+        _options = null;
 
   /// uses the provided builder and files for testing
-  GeneratorTester.fromBuilder(
+  SuccessGenerator.fromBuilder(
     this.fileName,
     GetBuilder builder, {
     Map<String, dynamic>? options,
     this.compareWithFixture = true,
     String? extension,
-    String? inputDir,
-    String? fixtureDir,
+    this.inputDir = _defaultInputDir,
+    this.fixtureDir = _defaultFixtureDir,
     String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
@@ -54,9 +54,7 @@ class GeneratorTester {
         _builder = builder,
         _options = options,
         _extension = extension,
-        fixtureFileName = fixtureFileName ?? fileName,
-        inputDir = inputDir ?? GeneratorPath.input,
-        fixtureDir = fixtureDir ?? GeneratorPath.fixture;
+        fixtureFileName = fixtureFileName ?? fileName;
 
   /// the names of the files to test
   final String fileName;

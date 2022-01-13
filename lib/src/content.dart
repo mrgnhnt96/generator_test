@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:generator_test/src/generator_path.dart';
 import 'package:meta/meta.dart';
 
 /// Input/fixture type for [Content] of the generator
@@ -133,7 +132,7 @@ mixin GetContentMixin {
   @visibleForTesting
   File? file;
 
-  /// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
+  /// Retrieves the file content from the [dirPath]/[fileName].dart file.
   String inputContent(
     String fileName, {
     required String dirPath,
@@ -150,7 +149,7 @@ mixin GetContentMixin {
     return input;
   }
 
-  /// Retrieves the file content from the [GeneratorPath.fixture]/[fileName].dart file.
+  /// Retrieves the file content from the [dirPath]/[fileName].dart file.
   ///
   /// Automatically adds
   /// - `part of '[fileName].dart';`
