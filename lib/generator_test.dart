@@ -1,4 +1,4 @@
 library generator_test;
 
-export 'src/domain/generator_path.dart';
-export 'src/domain/generator_tester.dart';
+export 'src/generator_path.dart';
+export 'src/generator_tester.dart';

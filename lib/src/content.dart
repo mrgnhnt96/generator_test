@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:generator_test/src/domain/generator_path.dart';
+import 'package:generator_test/src/generator_path.dart';
 import 'package:meta/meta.dart';
 
 /// Input/fixture type for [Content] of the generator

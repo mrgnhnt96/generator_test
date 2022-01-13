@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:generator_test/src/domain/content.dart';
+import 'package:generator_test/src/content.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 

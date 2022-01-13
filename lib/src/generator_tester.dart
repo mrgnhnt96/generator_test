@@ -1,7 +1,7 @@
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
-import 'package:generator_test/src/domain/content.dart';
-import 'package:generator_test/src/domain/generator_path.dart';
+import 'package:generator_test/src/content.dart';
+import 'package:generator_test/src/generator_path.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// provides the build options to return a builder

@@ -1,6 +1,6 @@
 import 'package:build/build.dart';
-import 'package:generator_test/src/domain/content.dart';
-import 'package:generator_test/src/domain/generator_tester.dart';
+import 'package:generator_test/src/content.dart';
+import 'package:generator_test/src/generator_tester.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
