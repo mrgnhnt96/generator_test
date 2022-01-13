@@ -262,20 +262,36 @@ void main() {
     group('#updatePart', () {
       test('should replace the part with provided', () {
         const fakePart = "part of 'fakeFileContent.dart';";
-        const part = 'expeliomus.mag.dart';
 
-        final result = content.updatePart(fakePart, part);
+        const parts = [
+          "part 'vol.de.dart';",
+          "part of 'vol.de.dart';",
+          "part './you/know/who.dart';",
+          "part of '../he/who/should/not/be.named.dart';",
+        ];
 
-        expect(result, contains(part));
+        for (final part in parts) {
+          final result = content.updatePart(fakePart, part);
+
+          expect(result, contains(part));
+        }
       });
 
       test('should prepend the part with provided', () {
         const fakeContent = '// fake file content';
-        const part = 'vol.de.dart';
 
-        final result = content.updatePart(fakeContent, part);
+        const parts = [
+          "part 'vol.de.dart';",
+          "part of 'vol.de.dart';",
+          "part './you/know/who.dart';",
+          "part of '../he/who/should/not/be.named.dart';",
+        ];
 
-        expect(result, startsWith(part));
+        for (final part in parts) {
+          final result = content.updatePart(fakeContent, part);
+
+          expect(result, startsWith(part));
+        }
       });
 
       test('should add the part with provided after imports', () {
