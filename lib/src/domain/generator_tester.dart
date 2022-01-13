@@ -41,8 +41,6 @@ class GeneratorTester {
   /// the generator to test
   final Generator? generator;
 
-  final Builder? _builder;
-
   /// compares the input content with the generated fixture
   ///
   /// if false, the test will pass if the generated
@@ -54,8 +52,14 @@ class GeneratorTester {
   /// If null, the extension is pulled from the builder extension list\
   /// Throws error if `builder.buildExtensions` is empty or
   /// has more than one element
-  String? get extension =>
-      _extension ?? builder.buildExtensions.values.single.first;
+  String? get extension {
+    if (_extension != null) {
+      return _extension;
+    }
+
+    return builder.buildExtensions.values.single.first;
+  }
+
   final String? _extension;
 
   /// the directory to use for the input files
@@ -71,6 +75,8 @@ class GeneratorTester {
   Builder get builder {
     return _builder ?? PartBuilder([generator!], '.g.dart');
   }
+
+  final Builder? _builder;
 
   /// the content from the input file
   Content get inputContent {
