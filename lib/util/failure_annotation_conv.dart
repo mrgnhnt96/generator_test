@@ -5,26 +5,15 @@ import 'package:source_gen/source_gen.dart';
 /// {@template should_throw_annotation}
 /// a helper class to convert [ShouldThrow] from an annotation
 /// {@endtemplat}
-class ShouldThrowAnnotation extends ShouldThrow {
-  /// {@macro should_throw_annotation}
-  const ShouldThrowAnnotation({
-    required String message,
-    required String? todo,
-    required TestDetails testDetails,
-  }) : super(
-          message,
-          todo: todo,
-          testDetails: testDetails,
-        );
-
+class ShouldThrowAnnotation {
   /// gets the should throw from the [element]
   static ShouldThrow fromElement(ElementAnnotation element) {
     final annotation = ConstantReader(element.computeConstantValue());
     final message = annotation.read('message').stringValue;
     final todo = annotation.read('todo').literalValue as String?;
-    // final checkForElementObj = annotation.read('checkForElement').objectValue;
-    // final checkForElement =
-    //     CheckElementAnnotation.fromReader(ConstantReader(checkForElementObj));
+    final checkForElementObj = annotation.read('checkForElement').objectValue;
+    final checkForElement =
+        CheckElementAnnotation.fromReader(ConstantReader(checkForElementObj));
 
     final testDetailsObj = annotation.read('testDetails').objectValue;
     final testDetails =
@@ -33,6 +22,7 @@ class ShouldThrowAnnotation extends ShouldThrow {
     return ShouldThrow(
       message,
       todo: todo,
+      checkForElement: checkForElement,
       testDetails: testDetails ??
           TestDetails(name: 'Testing ${element.element?.displayName}'),
     );
@@ -51,7 +41,7 @@ class ShouldThrowAnnotation extends ShouldThrow {
 /// {@template check_element_annotation}
 /// helper class to get [CheckElement] from a [ConstantReader]
 /// {@endtemplate}
-class CheckElementAnnotation extends CheckElement {
+class CheckElementAnnotation {
   /// {@macro check_element_annotation}
   static CheckElement fromReader(ConstantReader reader) {
     final isAttached = reader.read('isAttached').literalValue as bool?;
@@ -61,27 +51,14 @@ class CheckElementAnnotation extends CheckElement {
       return const CheckElement.isAttached();
     }
 
-    if (name != null) {
-      return CheckElement.name(name);
-    }
-
-    return const CheckElement();
+    return CheckElement(name);
   }
 }
 
 /// {@template test_details_annotation}
 /// helper class to get [TestDetails] from a [ConstantReader]
 /// {@endtemplate}
-class TestDetailsAnnotation extends TestDetails {
-  /// {@macro test_details_annotation}
-  TestDetailsAnnotation({
-    required String name,
-    required String? group,
-  }) : super(
-          name: name,
-          group: group,
-        );
-
+class TestDetailsAnnotation {
   /// gets the test details from the [reader]
   static TestDetails? fromReader(ConstantReader reader) {
     final name = reader.read('name').literalValue as String?;
