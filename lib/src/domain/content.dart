@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:generator_test/src/domain/generator_path.dart';
+import 'package:meta/meta.dart';
 
 /// Input/fixture type for [Content] of the generator
 enum PutType {
@@ -16,30 +17,42 @@ enum PutType {
 /// {@endtemplate}
 class Content with GetContentMixin {
   /// {@macro content}
-  const Content(
-    this.fileName, {
+  Content(
+    String fileName, {
     required this.addPart,
     required this.directory,
     String? extension,
   })  : type = PutType.input,
         fromFileName = fileName,
+        _fileName = fileName,
         _extension = extension;
 
   /// {@macro content}
   ///
   /// Formats the contents as a generated file
   Content.fixture(
-    this.fileName, {
+    String fileName, {
     String? fromFileName,
     required this.directory,
     String? extension,
   })  : type = PutType.fixture,
         fromFileName = fromFileName ?? fileName,
+        _fileName = fileName,
         _extension = extension,
         addPart = true;
 
+  final String _fileName;
+
   /// The name of the file
-  final String fileName;
+  String get fileName {
+    final name = _fileName;
+
+    if (name.contains('.')) {
+      return name.split('.').first;
+    }
+
+    return name;
+  }
 
   /// If the content is input or fixture
   final PutType type;
@@ -68,7 +81,7 @@ class Content with GetContentMixin {
     return inputContent(
       fromFileName,
       addPart: addPart,
-      extension: extension(getfixture: true),
+      extension: extension(useFixturePart: true),
       dirPath: directory,
     );
   }
@@ -87,8 +100,8 @@ class Content with GetContentMixin {
   String get filePath => '$lib$fileName${extension()}';
 
   /// The extension of the file
-  String extension({bool getfixture = false}) {
-    if (type == PutType.input && !getfixture) {
+  String extension({bool useFixturePart = false}) {
+    if (type == PutType.input && !useFixturePart) {
       return '.dart';
     }
 
@@ -110,7 +123,7 @@ class Content with GetContentMixin {
       ext = '$ext.dart';
     }
 
-    final extRegex = RegExp(r'\.[\w]+\.dart');
+    final extRegex = RegExp(r'^\.[\w]+\.dart$');
 
     if (!extRegex.hasMatch(ext)) {
       throw Exception('Invalid extension: $ext');
@@ -127,6 +140,10 @@ class Content with GetContentMixin {
 
 /// Methods to get the contents of a file
 mixin GetContentMixin {
+  /// the file to be used as source for the content
+  @visibleForTesting
+  File? file;
+
   /// Retrieves the file content from the [GeneratorPath.input]/[fileName].dart file.
   ///
   /// [addPart] adds `part '[fileName].g.dart';' to the file after imports
@@ -166,14 +183,14 @@ mixin GetContentMixin {
 
     final content = getFileContent(path);
 
-    final fixture = updatePart(content, "part of '$fileName.dart';\n\n");
+    final fixture = updatePart(content, "part of '$fileName.dart';");
 
     return fixture;
   }
 
   /// gets the file's content from the given [path].
   String getFileContent(String path) {
-    final file = File(path);
+    final file = this.file ?? File(path);
 
     if (!file.existsSync()) {
       throw Exception('File not found: $path');
@@ -194,17 +211,19 @@ mixin GetContentMixin {
     }
 
     if (!content.contains(RegExp('import .*;'))) {
-      return [part, content].join();
+      return [part, '\n\n', content].join();
     }
 
     final lines = content.split('\n');
-    final indexAfterImport = lines.indexWhere(
-      (line) =>
-          !line.startsWith(RegExp(r'^(import|//|\s)', multiLine: true)) &&
-          line.isNotEmpty,
+    var indexAfterImport = lines.indexWhere(
+      (line) => !line.startsWith(RegExp(r'^(import|//|\s)')) && line.isNotEmpty,
     );
 
-    lines.insert(indexAfterImport, part);
+    if (indexAfterImport == -1) {
+      indexAfterImport = lines.length;
+    }
+
+    lines.insert(indexAfterImport, '$part\n');
 
     return lines.join('\n');
   }
