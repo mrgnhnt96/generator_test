@@ -1,11 +1,19 @@
+// ignore_for_file: implementation_imports
+
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/content.dart';
 import 'package:generator_test/src/generator_path.dart';
+import 'package:logging/src/level.dart';
+import 'package:logging/src/log_record.dart';
+import 'package:logging/src/logger.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// provides the build options to return a builder
 typedef GetBuilder = Builder Function(BuilderOptions options);
+
+/// the method to be called during the build phase & the logger is used
+typedef OnLog = void Function(LogRecord);
 
 /// Prepares the generator and files for testing
 class GeneratorTester {
@@ -17,7 +25,11 @@ class GeneratorTester {
     String? inputDir,
     String? fixtureDir,
     String? fixtureFileName,
+    OnLog? onLog,
+    Level? logLevel,
   })  : _builder = null,
+        _logger = onLog,
+        _logLevel = logLevel,
         fixtureFileName = fixtureFileName ?? fileName,
         _extension = null,
         _options = null,
@@ -34,7 +46,11 @@ class GeneratorTester {
     String? inputDir,
     String? fixtureDir,
     String? fixtureFileName,
+    OnLog? onLog,
+    Level? logLevel,
   })  : generator = null,
+        _logger = onLog,
+        _logLevel = logLevel,
         _builder = builder,
         _options = options,
         _extension = extension,
@@ -53,6 +69,9 @@ class GeneratorTester {
   /// if false, the test will pass if the generated
   /// fixture contains no generated errors
   final bool compareWithFixture;
+
+  final OnLog? _logger;
+  final Level? _logLevel;
 
   /// the extension of the generated file
   ///
@@ -123,11 +142,15 @@ class GeneratorTester {
 
   /// tests the generator
   Future<void> test() async {
+    if (_logLevel != null) {
+      Logger.root.level = _logLevel;
+    }
+
     await testBuilder(
       builder,
       inputContent.toMap(),
       outputs: fixtureContent()?.toMap(),
-      onLog: print,
+      onLog: _logger ?? print,
       reader: await PackageAssetReader.currentIsolate(),
     );
   }
