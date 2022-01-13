@@ -148,8 +148,8 @@ class GeneratorTester {
 
     await testBuilder(
       builder,
-      inputContent.toMap(),
-      outputs: fixtureContent()?.toMap(),
+      inputContent.contentWithPaths,
+      outputs: fixtureContent()?.contentWithPaths,
       onLog: _logger ?? print,
       reader: await PackageAssetReader.currentIsolate(),
     );

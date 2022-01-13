@@ -131,11 +131,6 @@ class Content with GetContentMixin {
 
     return ext;
   }
-
-  /// returns the contents of the files mapped by the file path
-  Map<String, String> toMap() {
-    return <String, String>{filePath: content};
-  }
 }
 
 /// Methods to get the contents of a file

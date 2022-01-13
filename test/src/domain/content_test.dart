@@ -184,11 +184,11 @@ void main() {
     },
   );
 
-  test('#toMap should map content by file path', () {
+  test('#contentWithPaths should map content by file path', () {
     const name = 'dobby';
     final content = getContent(fileName: name)..file = FakeFile();
 
-    final contentMap = content.toMap();
+    final contentMap = content.contentWithPaths;
 
     expect(contentMap.keys.first, 'a|lib/dobby.dart');
     expect(contentMap.values.first, content.content);
