@@ -106,12 +106,15 @@ class GeneratorTester {
 
   /// the builder for the test
   Builder get builder {
-    return _builder?.call(builderOptions) ??
-        PartBuilder(
-          [generator!],
-          '.g.dart',
-          options: builderOptions,
-        );
+    if (_builder != null) {
+      return _builder!(builderOptions);
+    }
+
+    return PartBuilder(
+      [generator!],
+      '.g.dart',
+      options: builderOptions,
+    );
   }
 
   final GetBuilder? _builder;
