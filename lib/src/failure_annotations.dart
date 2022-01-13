@@ -7,15 +7,13 @@ import 'package:test/test.dart';
 /// {@endtemplate}
 class CheckElement {
   /// {@macro check_element}
-  const CheckElement()
+  const CheckElement([String? name])
       : this._(
-          checkDefault: true,
           isAttached: false,
-          name: null,
+          name: name,
         );
 
   const CheckElement._({
-    required this.checkDefault,
     required this.isAttached,
     required this.name,
   });
@@ -23,41 +21,27 @@ class CheckElement {
   /// checks that an element is attached to the error
   const CheckElement.isAttached()
       : this._(
-          checkDefault: true,
           isAttached: true,
           name: null,
         );
 
-  /// checks that an element with the [name] is attached to the error
-  const CheckElement.name(String name)
-      : this._(
-          checkDefault: true,
-          isAttached: true,
-          name: name,
-        );
-
-  /// checks that an element with the [name] is attached to the error
+  /// checks that an element is attached to the error
   final bool? isAttached;
 
   /// checks that an element with the [name] is attached to the error
   final String? name;
 
   /// checks that an element with the [name] is attached to the error
-  final bool checkDefault;
-
-  /// checks that an element with the [name] is attached to the error
   Matcher? matcher(String elementName) {
-    if (name != null || checkDefault) {
-      return const TypeMatcher<Element>().having(
-        (e) => e.name,
-        'name',
-        name ?? elementName,
-      );
-    }
-
     if (isAttached != null) {
       return isAttached! ? isNotNull : isNull;
     }
+
+    return const TypeMatcher<Element>().having(
+      (e) => e.name,
+      'name',
+      name ?? elementName,
+    );
   }
 }
 
@@ -87,10 +71,11 @@ class ShouldThrow {
     this.message, {
     this.todo = '',
     this.testDetails,
+    this.checkForElement = const CheckElement(),
   });
 
   /// checks for the element attached to the error
-  // final CheckElement checkForElement;
+  final CheckElement checkForElement;
 
   /// the message that should be thrown
   final String message;
@@ -109,11 +94,11 @@ class ShouldThrow {
       message,
     );
 
-    // matcher = matcher.having(
-    //   (e) => e.element,
-    //   'element',
-    //   checkForElement.matcher(elementName),
-    // );
+    matcher = matcher.having(
+      (e) => e.element,
+      'element',
+      checkForElement.matcher(elementName),
+    );
 
     if (todo != null) {
       matcher = matcher.having(
