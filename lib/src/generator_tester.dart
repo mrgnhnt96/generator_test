@@ -21,7 +21,7 @@ class GeneratorTester {
   GeneratorTester(
     this.fileName,
     this.generator, {
-    this.compareWithFixture = false,
+    this.compareWithFixture = true,
     String? inputDir,
     String? fixtureDir,
     String? fixtureFileName,
@@ -41,7 +41,7 @@ class GeneratorTester {
     this.fileName,
     GetBuilder builder, {
     Map<String, dynamic>? options,
-    this.compareWithFixture = false,
+    this.compareWithFixture = true,
     String? extension,
     String? inputDir,
     String? fixtureDir,
@@ -123,7 +123,6 @@ class GeneratorTester {
   Content get inputContent {
     return Content(
       fileName,
-      addPart: compareWithFixture,
       extension: extension,
       directory: inputDir,
     );
