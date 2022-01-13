@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_field_initializers_in_const_classes, recursive_getters
 
 import 'package:build/build.dart';
-import 'package:generator_test/src/domain/generator_prep.dart';
+import 'package:generator_test/src/domain/generator_tester.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Run test with code generated from the [fileName] file
@@ -13,7 +13,7 @@ Future<void> testPartGenerator(
   String? fixtureDir,
   String? fixtureFileName,
 }) async {
-  final codeGen = GeneratorPrep(
+  final codeGen = GeneratorTester(
     fileName,
     generator,
     compareWithFixture: compareWithFixture,
@@ -41,7 +41,7 @@ Future<void> testPackageBuilder(
 }) async {
   final builderConfig = BuilderOptions(builderOptions ?? <String, dynamic>{});
 
-  final codeGen = GeneratorPrep.fromBuilder(
+  final codeGen = GeneratorTester.fromBuilder(
     fileName,
     builder(builderConfig),
     compareWithFixture: compareWithFixture,

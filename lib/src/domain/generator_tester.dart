@@ -5,9 +5,9 @@ import 'package:generator_test/src/domain/generator_path.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// Prepares the generator and files for testing
-class GeneratorPrep {
+class GeneratorTester {
   /// prepares the generator and file for testing
-  GeneratorPrep(
+  GeneratorTester(
     this.fileName,
     this.generator, {
     this.compareWithFixture = false,
@@ -21,7 +21,7 @@ class GeneratorPrep {
         fixtureDir = fixtureDir ?? GeneratorPath.fixture;
 
   /// uses the provided builder and files for testing
-  GeneratorPrep.fromBuilder(
+  GeneratorTester.fromBuilder(
     this.fileName,
     this._builder, {
     this.compareWithFixture = false,
