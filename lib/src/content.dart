@@ -106,7 +106,11 @@ class Content with GetContentMixin {
 
     var ext = _extension;
 
-    if (ext == null || ext.endsWith('.part')) {
+    if (isSharedPartFile) {
+      return ext!;
+    }
+
+    if (ext == null) {
       return '.g.dart';
     }
 
@@ -198,7 +202,7 @@ mixin GetContentMixin {
     final partRegex = RegExp("^part .*';", multiLine: true);
 
     if (removePart) {
-      return content.replaceFirst(partRegex, '');
+      return content.replaceFirst(partRegex, '').replaceFirst('\n\n\n', '\n');
     }
 
     assert(part != null, 'Part cannot be null');
