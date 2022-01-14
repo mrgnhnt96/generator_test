@@ -69,6 +69,7 @@ class Content with GetContentMixin {
         fileName,
         fromFileName: fromFileName,
         dirPath: directory,
+        addPart: !isSharedPartFile,
       );
     }
 
@@ -78,6 +79,9 @@ class Content with GetContentMixin {
       dirPath: directory,
     );
   }
+
+  /// whether the part file is shared with other generators
+  bool get isSharedPartFile => _extension?.endsWith('.part') ?? false;
 
   /// The contents of the file as a string, mapped by [filePath]
   Map<String, String> get contentWithPaths {
@@ -93,6 +97,8 @@ class Content with GetContentMixin {
   String get filePath => '$lib$fileName${extension()}';
 
   /// The extension of the file
+  ///
+  /// returns null when the file is a shared part
   String extension({bool useFixturePart = false}) {
     if (type == PutType.input && !useFixturePart) {
       return '.dart';
@@ -100,12 +106,8 @@ class Content with GetContentMixin {
 
     var ext = _extension;
 
-    if (ext == null) {
+    if (ext == null || ext.endsWith('.part')) {
       return '.g.dart';
-    }
-
-    if (ext.endsWith('.part')) {
-      return ext;
     }
 
     if (ext == '.dart') {
@@ -163,12 +165,17 @@ mixin GetContentMixin {
     String fileName, {
     required String fromFileName,
     required String dirPath,
+    required bool addPart,
   }) {
     final path = '$dirPath/$fromFileName.dart';
 
     final content = getFileContent(path);
 
-    final fixture = updatePart(content, "part of '$fileName.dart';");
+    var fixture = content;
+
+    if (addPart) {
+      fixture = updatePart(content, "part of '$fileName.dart';");
+    }
 
     return fixture;
   }
