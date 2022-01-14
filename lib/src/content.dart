@@ -104,6 +104,10 @@ class Content with GetContentMixin {
       return '.g.dart';
     }
 
+    if (ext.endsWith('.part')) {
+      return ext;
+    }
+
     if (ext == '.dart') {
       return '.g$ext';
     }
