@@ -5,6 +5,8 @@ import 'package:generator_test/src/content.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
+// TODO(mrgnhnt96): Add tests for shared part files
+
 extension on Content {
   String fakeFileContent({required bool forFixture}) {
     var part = '';
@@ -200,7 +202,6 @@ void main() {
     });
 
     String input({
-      required bool addPart,
       String? extension,
     }) {
       return content.inputContent(
@@ -217,18 +218,13 @@ void main() {
         fileName ?? content.fileName,
         fromFileName: content.fromFileName,
         dirPath: content.directory,
+        isSharedPart: false,
       );
     }
 
     group('#inputContent', () {
-      test('should not add part when set to false', () {
-        final inputContent = input(addPart: false);
-
-        expect(inputContent, isNot(contains('part')));
-      });
-
       test('should add part when set to true', () {
-        final inputContent = input(addPart: true);
+        final inputContent = input();
 
         expect(inputContent, contains('part'));
       });
@@ -239,7 +235,7 @@ void main() {
       'and update part with extension',
       () {
         const extension = '.HP.dart';
-        final inputContent = input(addPart: true, extension: extension);
+        final inputContent = input(extension: extension);
 
         expect(inputContent, contains(extension));
       },
@@ -308,7 +304,7 @@ class DartCode {}
         const part = "part 'vol.de.dart';";
 
         for (final fakeContent in fakeContents) {
-          final result = content.updatePart(fakeContent, part);
+          final result = content.updatePart(fakeContent, part: part);
 
           expect(result, contains(part));
           expect(result, isNot(contains(fakeFileName)));
@@ -326,7 +322,7 @@ class DartCode {}
         ];
 
         for (final part in parts) {
-          final result = content.updatePart(fakeContent, part);
+          final result = content.updatePart(fakeContent, part: part);
 
           expect(result, startsWith(part));
         }
@@ -364,7 +360,7 @@ class DartCode {}
         const part = 'cornelius.fudge.dart';
 
         for (final fakeContent in fakeContents) {
-          final result = content.updatePart(fakeContent, part);
+          final result = content.updatePart(fakeContent, part: part);
 
           expect(result, contains(part));
         }
