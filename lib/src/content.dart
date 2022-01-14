@@ -202,7 +202,10 @@ mixin GetContentMixin {
     final partRegex = RegExp("^part .*';", multiLine: true);
 
     if (removePart) {
-      return content.replaceFirst(partRegex, '').replaceFirst('\n\n\n', '\n');
+      return content
+          .replaceFirst(partRegex, '')
+          .replaceFirst('\n\n', '')
+          .replaceFirst('\n\n\n', '\n');
     }
 
     assert(part != null, 'Part cannot be null');
