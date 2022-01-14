@@ -69,7 +69,7 @@ class Content with GetContentMixin {
         fileName,
         fromFileName: fromFileName,
         dirPath: directory,
-        addPart: !isSharedPartFile,
+        isSharedPart: isSharedPartFile,
       );
     }
 
@@ -150,7 +150,7 @@ mixin GetContentMixin {
 
     final content = getFileContent(path);
 
-    final input = updatePart(content, part);
+    final input = updatePart(content, part: part);
 
     return input;
   }
@@ -165,17 +165,17 @@ mixin GetContentMixin {
     String fileName, {
     required String fromFileName,
     required String dirPath,
-    required bool addPart,
+    required bool isSharedPart,
   }) {
     final path = '$dirPath/$fromFileName.dart';
 
     final content = getFileContent(path);
 
-    var fixture = content;
-
-    if (addPart) {
-      fixture = updatePart(content, "part of '$fileName.dart';");
-    }
+    final fixture = updatePart(
+      content,
+      part: "part of '$fileName.dart';",
+      removePart: isSharedPart,
+    );
 
     return fixture;
   }
@@ -194,8 +194,15 @@ mixin GetContentMixin {
   }
 
   /// Adds or updates the [part] to the [content]
-  String updatePart(String content, String part) {
+  String updatePart(String content, {String? part, bool removePart = false}) {
     final partRegex = RegExp("^part .*';", multiLine: true);
+
+    if (removePart) {
+      return content.replaceFirst(partRegex, '');
+    }
+
+    assert(part != null, 'Part cannot be null');
+    part!;
 
     // check for part with specific extension
     if (content.contains(partRegex)) {
