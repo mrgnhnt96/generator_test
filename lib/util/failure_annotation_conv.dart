@@ -1,14 +1,35 @@
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:generator_test/src/failure_annotations.dart';
+import 'package:generator_test/src/source_gen_test/expectation_element.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// {@template should_throw_annotation}
 /// a helper class to convert [ShouldThrow] from an annotation
-/// {@endtemplat}
+/// {@endtemplate}
 class ShouldThrowAnnotation {
-  /// gets the should throw from the [element]
-  static ShouldThrow fromElement(ElementAnnotation element) {
-    final annotation = ConstantReader(element.computeConstantValue());
+  /// gets the [ShouldThrow] annotation from an [Element]
+  static Iterable<FailureElement> failuresForElement(Element element) sync* {
+    final throws = fromElement(element);
+
+    for (final failure in throws) {
+      yield FailureElement(element: element, shouldThrow: failure);
+    }
+  }
+
+  /// get the annotations from the [element]
+  static Iterable<ShouldThrow> fromElement(Element element) sync* {
+    final annotations =
+        const TypeChecker.fromRuntime(ShouldThrow).annotationsOf(element);
+
+    for (final annotation in annotations) {
+      yield ShouldThrowAnnotation.fromObject(annotation, element.displayName);
+    }
+  }
+
+  /// gets the should throw from the [object]
+  static ShouldThrow fromObject(DartObject? object, String name) {
+    final annotation = ConstantReader(object);
     final message = annotation.read('message').stringValue;
     final todo = annotation.read('todo').literalValue as String?;
     final checkForElementObj = annotation.read('checkForElement').objectValue;
@@ -19,12 +40,17 @@ class ShouldThrowAnnotation {
     final testDetails =
         TestDetailsAnnotation.fromReader(ConstantReader(testDetailsObj));
 
+    final expectedLogs = annotation
+        .read('expectedLogs')
+        .listValue
+        .map((obj) => obj.toStringValue()!);
+
     return ShouldThrow(
       message,
       todo: todo,
       checkForElement: checkForElement,
-      testDetails: testDetails ??
-          TestDetails(name: 'Testing ${element.element?.displayName}'),
+      testDetails: testDetails ?? TestDetails(name: 'Testing $name'),
+      expectedLogs: expectedLogs,
     );
   }
 
@@ -32,7 +58,10 @@ class ShouldThrowAnnotation {
   static ShouldThrow? fromElements(List<ElementAnnotation> metadata) {
     for (final annotation in metadata) {
       if (annotation.element?.displayName == '$ShouldThrow') {
-        return ShouldThrowAnnotation.fromElement(annotation);
+        return ShouldThrowAnnotation.fromObject(
+          annotation.computeConstantValue(),
+          annotation.element!.displayName,
+        );
       }
     }
   }

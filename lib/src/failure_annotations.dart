@@ -10,29 +10,47 @@ class CheckElement {
   const CheckElement([String? name])
       : this._(
           isAttached: false,
+          ignore: false,
           name: name,
         );
 
   const CheckElement._({
     required this.isAttached,
     required this.name,
+    required this.ignore,
   });
 
   /// checks that an element is attached to the error
   const CheckElement.isAttached()
       : this._(
           isAttached: true,
+          ignore: false,
+          name: null,
+        );
+
+  /// checks that an element is attached to the error
+  const CheckElement.ignore()
+      : this._(
+          ignore: true,
+          isAttached: null,
           name: null,
         );
 
   /// checks that an element is attached to the error
   final bool? isAttached;
 
+  /// whether to ignore the element
+  final bool ignore;
+
   /// checks that an element with the [name] is attached to the error
   final String? name;
 
   /// checks that an element with the [name] is attached to the error
   Matcher? matcher(String elementName) {
+    if (ignore) {
+      return null;
+    }
+
     if (isAttached != null) {
       return isAttached! ? isNotNull : isNull;
     }
@@ -51,14 +69,14 @@ class CheckElement {
 class TestDetails {
   ///{@macro test_details}
   const TestDetails({
-    required this.name,
+    this.name,
     this.group,
   });
 
   /// the description of the test
-  final String name;
+  final String? name;
 
-  /// the descriptino of the group
+  /// the description of the group
   final String? group;
 }
 
@@ -72,6 +90,7 @@ class ShouldThrow {
     this.todo = '',
     this.testDetails,
     this.checkForElement = const CheckElement(),
+    this.expectedLogs,
   });
 
   /// checks for the element attached to the error
@@ -85,6 +104,9 @@ class ShouldThrow {
 
   /// the details of the test
   final TestDetails? testDetails;
+
+  /// the logs that should be emitted during the test
+  final Iterable<String>? expectedLogs;
 
   /// checks that the error is thrown
   Matcher does(String elementName) {
