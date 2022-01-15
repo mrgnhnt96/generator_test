@@ -1,11 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:generator_test/src/content.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-// TODO(mrgnhnt96): Add tests for shared part files
+import 'package:generator_test/src/content.dart';
 
 extension on Content {
   String fakeFileContent({required bool forFixture}) {
@@ -213,44 +212,86 @@ void main() {
 
     String fixture({
       String? fileName,
+      bool? isSharedPart,
+      String? prepend,
     }) {
+      final content = getContent()..file = FakeFile(prepend: prepend);
+
       return content.fixtureContent(
         fileName ?? content.fileName,
         fromFileName: content.fromFileName,
         dirPath: content.directory,
-        isSharedPart: false,
+        isSharedPart: isSharedPart ?? false,
       );
     }
 
     group('#inputContent', () {
-      test('should add part when set to true', () {
+      test('should add part', () {
         final inputContent = input();
 
         expect(inputContent, contains('part'));
       });
+
+      test(
+        'should retrieve file content '
+        'and update part with extension',
+        () {
+          const extension = '.HP.dart';
+          final inputContent = input(extension: extension);
+
+          expect(inputContent, contains(extension));
+        },
+      );
     });
 
-    test(
-      '#inputContent should retrieve file content '
-      'and update part with extension',
-      () {
-        const extension = '.HP.dart';
-        final inputContent = input(extension: extension);
+    group('#fixtureContent', () {
+      test(
+        'should retrieve file content '
+        'and update part with fileName',
+        () {
+          const name = 'professor_snape';
+          final fixtureContent = fixture(fileName: name);
 
-        expect(inputContent, contains(extension));
-      },
-    );
+          expect(fixtureContent, contains(name));
+        },
+      );
 
-    test(
-      '#fixtureContent should retrieve file content '
-      'and update part with fileName',
-      () {
-        const name = 'professor_snape';
-        final fixtureContent = fixture(fileName: name);
+      test(
+        'remove part if generated is for shared part file',
+        () {
+          final fixtureContent = fixture(isSharedPart: true);
 
-        expect(fixtureContent, contains(name));
-      },
-    );
+          expect(fixtureContent, isNot(contains('part')));
+        },
+      );
+
+      test(
+        'remove all leading whitespace from file when shared part file',
+        () {
+          const prepends = [
+            ' ',
+            '\n',
+            '\n ',
+            ' \n ',
+            '\n\n',
+          ];
+
+          for (final prepend in prepends) {
+            final fixtureContent =
+                fixture(isSharedPart: true, prepend: prepend);
+
+            expect(
+              fixtureContent,
+              isNot(
+                contains(
+                  RegExp(r'^\s+'),
+                ),
+              ),
+            );
+          }
+        },
+      );
+    });
 
     group('#updatePart', () {
       test('should replace the part with provided', () {
@@ -370,11 +411,16 @@ class DartCode {}
 }
 
 class FakeFile extends Fake implements File {
+  FakeFile({String? prepend}) : prepend = prepend ?? '';
+
   @override
   bool existsSync() => true;
 
+  final String prepend;
+
   @override
-  String readAsStringSync({Encoding encoding = utf8}) => _fakeFileContent;
+  String readAsStringSync({Encoding encoding = utf8}) =>
+      '$prepend$_fakeFileContent';
 }
 
 const _fakeFileContent = '''

@@ -2,11 +2,12 @@
 
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
-import 'package:generator_test/src/content.dart';
 import 'package:logging/src/level.dart';
 import 'package:logging/src/log_record.dart';
 import 'package:logging/src/logger.dart';
 import 'package:source_gen/source_gen.dart';
+
+import 'package:generator_test/src/content.dart';
 
 /// provides the build options to return a builder
 typedef GetBuilder = Builder Function(BuilderOptions options);

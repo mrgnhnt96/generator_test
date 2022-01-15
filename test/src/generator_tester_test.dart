@@ -1,9 +1,10 @@
 import 'package:build/build.dart';
-import 'package:generator_test/src/content.dart';
-import 'package:generator_test/src/success_generator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
+
+import 'package:generator_test/src/content.dart';
+import 'package:generator_test/src/success_generator.dart';
 
 void main() {
   SuccessGenerator generator({
