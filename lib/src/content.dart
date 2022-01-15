@@ -204,7 +204,7 @@ mixin GetContentMixin {
     if (removePart) {
       return content
           .replaceFirst(partRegex, '')
-          .replaceFirst('\n\n', '')
+          .replaceFirst(RegExp(r'^\s+'), '')
           .replaceFirst('\n\n\n', '\n');
     }
 
