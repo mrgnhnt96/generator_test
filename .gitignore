@@ -5,3 +5,6 @@
 .packages
 build/
 pubspec.lock
+coverage/
+.codecov_secret
+codecov
