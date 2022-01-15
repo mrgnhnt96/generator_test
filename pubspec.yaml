@@ -1,7 +1,6 @@
 name: generator_test
-description: A Very Good Project created by Very Good CLI.
+description: A library to help test generators and build runner packages using dart files instead of Strings
 version: 0.1.0+1
-publish_to: none
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
