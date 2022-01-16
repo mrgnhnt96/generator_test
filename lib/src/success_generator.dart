@@ -21,7 +21,7 @@ const _defaultFixtureDir = 'test/fixture/fixtures';
 /// Prepares the generator and files for testing
 class SuccessGenerator {
   /// prepares the generator and file for testing
-  SuccessGenerator(
+  const SuccessGenerator(
     this.fileName,
     this.generator, {
     this.compareWithFixture = true,
