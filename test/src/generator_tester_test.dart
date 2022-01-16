@@ -17,8 +17,8 @@ void main() {
     return SuccessGenerator(
       fileName ?? 'fileName',
       MockGenerator(),
-      inputDir: inputDir ?? 'test/fixture',
-      fixtureDir: fixtureDir ?? 'test/fixture/fixtures',
+      inputDir: inputDir ?? SuccessGenerator.defaultInputDir,
+      fixtureDir: fixtureDir ?? SuccessGenerator.defaultFixtureDir,
       compareWithFixture: compareWithFixture,
       fixtureFileName: fixtureFileName,
     );
@@ -36,8 +36,8 @@ void main() {
     return SuccessGenerator.fromBuilder(
       fileName ?? 'fileName',
       (_) => FakeBuilder(extension: builderExtension),
-      inputDir: inputDir ?? 'test/fixture',
-      fixtureDir: fixtureDir ?? 'test/fixture/fixtures',
+      inputDir: inputDir ?? SuccessGenerator.defaultInputDir,
+      fixtureDir: fixtureDir ?? SuccessGenerator.defaultFixtureDir,
       compareWithFixture: compareWithFixture,
       fixtureFileName: fixtureFileName,
       extension: extension,

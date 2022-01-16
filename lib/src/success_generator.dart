@@ -5,6 +5,7 @@ import 'package:build_test/build_test.dart';
 import 'package:logging/src/level.dart';
 import 'package:logging/src/log_record.dart';
 import 'package:logging/src/logger.dart';
+import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'package:generator_test/src/content.dart';
@@ -15,9 +16,6 @@ typedef GetBuilder = Builder Function(BuilderOptions options);
 /// the method to be called during the build phase & the logger is used
 typedef OnLog = void Function(LogRecord);
 
-const _defaultInputDir = 'test/fixture';
-const _defaultFixtureDir = 'test/fixture/fixtures';
-
 /// Prepares the generator and files for testing
 class SuccessGenerator {
   /// prepares the generator and file for testing
@@ -25,8 +23,8 @@ class SuccessGenerator {
     this.fileName,
     this.generator, {
     this.compareWithFixture = true,
-    this.inputDir = _defaultInputDir,
-    this.fixtureDir = _defaultFixtureDir,
+    this.inputDir = defaultInputDir,
+    this.fixtureDir = defaultFixtureDir,
     String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
@@ -44,8 +42,8 @@ class SuccessGenerator {
     Map<String, dynamic>? options,
     this.compareWithFixture = true,
     String? extension,
-    this.inputDir = _defaultInputDir,
-    this.fixtureDir = _defaultFixtureDir,
+    this.inputDir = defaultInputDir,
+    this.fixtureDir = defaultFixtureDir,
     String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
@@ -56,6 +54,14 @@ class SuccessGenerator {
         _options = options,
         _extension = extension,
         fixtureFileName = fixtureFileName ?? fileName;
+
+  /// the default input file directory
+  @visibleForTesting
+  static const defaultInputDir = 'test/fixture';
+
+  /// the default fixture file directory
+  @visibleForTesting
+  static const defaultFixtureDir = 'test/fixture/fixtures';
 
   /// the names of the files to test
   final String fileName;
