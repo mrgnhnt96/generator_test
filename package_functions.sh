@@ -86,9 +86,8 @@ function publish() {
 
   if $dryRun; then
     echo "[DRY RUN] Publishing..."
-  fi
+    waitASec
 
-  if $dryRun; then
     dart pub publish --dry-run
     echo "[DRY RUN] Publishing complete"
     return
