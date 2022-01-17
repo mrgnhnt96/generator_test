@@ -54,7 +54,7 @@ function runtests() {
 
   format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
 
-  if [ $dryRun ]; then
+  if $dryRun; then
     echo "[DRY RUN] Skipping code cov..."
     return 0
   fi
@@ -84,11 +84,11 @@ function publish() {
   printf "\n"
   echo "Preparing to publish..."
 
-  if [ $dryRun ]; then
+  if $dryRun; then
     echo "[DRY RUN] Publishing..."
   fi
 
-  if [ $dryRun ]; then
+  if $dryRun; then
     dart pub publish --dry-run
     echo "[DRY RUN] Publishing complete"
     return
@@ -204,7 +204,7 @@ function createGitRelease() {
     exit 1
   fi
 
-  if [ $dryRun ]; then
+  if $dryRun; then
     local draft="--draft"
     local draftText="(Draft) "
     echo "Creating draft release..."
