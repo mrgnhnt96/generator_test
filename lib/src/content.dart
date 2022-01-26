@@ -181,7 +181,9 @@ mixin GetContentMixin {
       removePart: isSharedPart,
     );
 
-    return fixture;
+    final generatedFixture = updateGenerated(fixture);
+
+    return generatedFixture;
   }
 
   /// gets the file's content from the given [path].
@@ -232,5 +234,38 @@ mixin GetContentMixin {
     lines.insert(indexAfterImport, '$part\n');
 
     return lines.join('\n');
+  }
+
+  /// Adds the generator name comment to the content
+  String updateGenerated(String content) {
+    final match = RegExp(r'\/\/ @generator=((\w|\$)+)');
+
+    if (!content.contains(match)) {
+      return content;
+    }
+
+    final line = '*' * 77;
+    String header(String name) => '''
+// $line
+// $name
+// $line
+''';
+
+    final results = match.allMatches(content);
+
+    for (final result in results) {
+      final generatorName = result.group(1);
+      if (generatorName == null) {
+        continue;
+      }
+
+      // ignore: parameter_assignments
+      content = content.replaceAll(
+        match,
+        header(generatorName),
+      );
+    }
+
+    return content;
   }
 }

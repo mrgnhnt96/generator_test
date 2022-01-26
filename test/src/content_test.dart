@@ -407,6 +407,34 @@ class DartCode {}
         }
       });
     });
+
+    group('updateGenerated', () {
+      test('should replace generator name', () {
+        const generatorName = 'fakeGenerator';
+
+        const fakeContents = [
+          '// @generator=$generatorName',
+          '''
+// @generator=$generatorName
+
+part 'vol.de.dart';
+''',
+        ];
+
+        final line = '// ${'*' * 77}';
+        String header(String name) => '''
+// $line
+// $generatorName
+// $line
+''';
+
+        for (final fakeContent in fakeContents) {
+          final result = content.updateGenerated(fakeContent);
+
+          expect(result, startsWith(header(generatorName)));
+        }
+      });
+    });
   });
 }
 
