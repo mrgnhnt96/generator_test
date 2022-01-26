@@ -62,8 +62,13 @@ part of '../example.dart';
 
 The `generator_test` package will handle the files `part`s for you, whether it should be included or not, and the extension to be used based on the builder being tested.
 
-**Take Note:**\
-_You must include the generator's (class) name, enclosed in `***`, within the fixture file_
+You can provide the generator name wrapped in `*` (77 total) or you can let the package handle it for you. Like so,
+
+```dart
+// @generator=ClassNameGenerator
+```
+
+`generator_test` will use the provided name of the generator and wrap it with `*`
 
 ### Create your test
 
