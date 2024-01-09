@@ -42,8 +42,6 @@ To use this package, you will create files, an input & a fixture file (aka the e
 Here is an example of what your input file could look like
 
 ```dart
-part 'fixtures/example.dart';
-
 @ClassName()
 class Example {}
 ```
@@ -51,8 +49,6 @@ class Example {}
 And here is an example of what your fixture file could look like
 
 ```dart
-part of '../example.dart';
-
 // **************************************************************************
 // ClassNameGenerator
 // **************************************************************************
@@ -78,16 +74,13 @@ You can provide the generator name wrapped in `*` (77 total) or you can let the 
 // create the test generator
 
 final generator = SuccessGenerator(
-      'example',
+      ['example.dart'],
+      ['example.g.dart'],
       ClassNameGenerator(),
-      inputDir: 'test/fixture', // default
-      fixtureDir: 'test/fixture/fixtures', // default
-      compareWithFixture: true, // use `false` to validate dart code only
-      fixtureFileName: ..., // used when fixture file name does not match input file name
+      compareWithFixture: true, // use `false` to validate input only only
     );
-);
 
-// run the test
+// Test that the generator runs successfully
 generator.test();
 ```
 
@@ -95,17 +88,14 @@ generator.test();
 
 ```dart
 final generator = SuccessGenerator.fromBuilder(
-      'example',
+      ['example.dart'],
+      ['example.g.dart'],
       classNameBuilder, // entry point for the build_runner
-      inputDir: 'test/fixture', // default
-      fixtureDir: 'test/fixture/fixtures', // default
-      compareWithFixture: true, // use `false` to validate dart code only
-      fixtureFileName: ..., // used when fixture file name does not match input file name
-      extension: ..., // retrieves from the builder ie: .g.dart
-      options: ..., // config for your builder ie: {'add_comment': true}
+      compareWithFixture: true, // use `false` to validate input only only
+      options: {}, // config for your builder ie: {'add_comment': true}
     );
 
-// run the test
+// test the output
 generator.test();
 ```
 
@@ -123,10 +113,10 @@ void main(){
     final generator = SuccessGenerator.fromBuilder(
           'example',
           classNameBuilder,
-          compareWithFixture: false, // use `false` to validate dart code
+          compareWithFixture: false, // use `false` to validate input only
         );
 
-    // dubug your package
+    // debug your package
     await generator.test();
   });
 }
@@ -136,5 +126,4 @@ Find the values you're looking for!
 
 ![analyzer_api_debug](assets/analyzer_api_debug.png)
 
-[fixture]: https://stackoverflow.com/q/12071344/12123033
 [analyzer]: https://pub.dev/packages/analyzer
