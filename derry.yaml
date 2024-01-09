@@ -1,29 +1,27 @@
-bbuild: dart run build_runner build --delete-conflicting-outputs
+br: # build_runner
+  w: dart run build_runner watch --delete-conflicting-outputs
+  b: dart run build_runner build --delete-conflicting-outputs
+  c: dart run build_runner clean build
 
-bwatch: dart run build_runner watch --delete-conflicting-outputs
+project:
+  clean:
+    - dart pub upgrade
+    - dart pub get
+  sort: dart pub global run import_sorter:main
+  prep:
+    - dart format lib test
+    - $sort
 
-bclean: dart run build_runner clean build
-
-clean:
-  - dart pub upgrade
-  - dart pub get
-
-sort: dart pub global run import_sorter:main
-
-prep:
-  - dart format lib test
-  - $sort
-
-coverage:
-  - format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
-  - genhtml coverage/lcov.info -o coverage
-  - open coverage/index.html
-  - curl -Os https://uploader.codecov.io/latest/macos/codecov
-  - chmod +x codecov
-
-uploadcoverage:
-  - val=$(cat .codecov_secret); ./codecov -t $val
-
-runtests:
-  - dart run test --coverage coverage -r expanded --test-randomize-ordering-seed random --timeout 60s
-  - $coverage
+test:
+  (scripts): dart run test --coverage coverage -r expanded --test-randomize-ordering-seed random --timeout 60s
+  coverage:
+    (scripts):
+      - $test
+      - $coverage:get
+    get:
+      - format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
+      - genhtml coverage/lcov.info -o coverage
+      - open coverage/index.html
+      - curl -Os https://uploader.codecov.io/latest/macos/codecov
+      - chmod +x codecov
+    upload: val=$(cat .codecov_secret); ./codecov -t $val
