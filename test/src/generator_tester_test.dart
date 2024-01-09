@@ -1,10 +1,8 @@
 import 'package:build/build.dart';
+import 'package:generator_test/src/success_generator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:test/test.dart';
-
-import 'package:generator_test/src/content.dart';
-import 'package:generator_test/src/success_generator.dart';
 
 void main() {
   SuccessGenerator generator({
@@ -12,15 +10,17 @@ void main() {
     String? inputDir,
     String? fixtureDir,
     bool compareWithFixture = true,
-    String? fixtureFileName,
+    String? partOfFile,
   }) {
+    final fileName_ = fileName ?? 'fileName';
     return SuccessGenerator(
-      fileName ?? 'fileName',
+      [fileName_],
+      [fileName_],
       MockGenerator(),
       inputDir: inputDir ?? SuccessGenerator.defaultInputDir,
       fixtureDir: fixtureDir ?? SuccessGenerator.defaultFixtureDir,
       compareWithFixture: compareWithFixture,
-      fixtureFileName: fixtureFileName,
+      partOfFile: partOfFile ?? fileName_,
     );
   }
 
@@ -29,17 +29,19 @@ void main() {
     String? inputDir,
     String? fixtureDir,
     bool compareWithFixture = true,
-    String? fixtureFileName,
+    String? partOfFile,
     String? extension,
     String? builderExtension,
   }) {
+    final fileName_ = fileName ?? 'fileName';
     return SuccessGenerator.fromBuilder(
-      fileName ?? 'fileName',
+      [fileName_],
+      [fileName_],
       (_) => FakeBuilder(extension: builderExtension),
       inputDir: inputDir ?? SuccessGenerator.defaultInputDir,
       fixtureDir: fixtureDir ?? SuccessGenerator.defaultFixtureDir,
       compareWithFixture: compareWithFixture,
-      fixtureFileName: fixtureFileName,
+      partOfFile: partOfFile ?? fileName_,
       extension: extension,
     );
   }
@@ -58,8 +60,8 @@ void main() {
       });
 
       test('returns default directory when not provided', () {
-        expect(generator().inputDir, 'test/fixture');
-        expect(builder().inputDir, 'test/fixture');
+        expect(generator().inputDir, 'test/inputs');
+        expect(builder().inputDir, 'test/inputs');
       });
     });
 
@@ -72,30 +74,30 @@ void main() {
       });
 
       test('returns default directory when not provided', () {
-        expect(generator().fixtureDir, 'test/fixture/fixtures');
-        expect(builder().fixtureDir, 'test/fixture/fixtures');
+        expect(generator().fixtureDir, 'test/fixtures');
+        expect(builder().fixtureDir, 'test/fixtures');
       });
     });
 
-    group('#fixtureFileName', () {
+    group('#partOfFile', () {
       test('returns provided fixture file name', () {
         const name = 'scabbers';
         const fixture = 'worm_tail';
 
         expect(
-          generator(fileName: name, fixtureFileName: fixture).fixtureFileName,
+          generator(fileName: name, partOfFile: fixture).partOfFile,
           fixture,
         );
         expect(
-          builder(fileName: name, fixtureFileName: fixture).fixtureFileName,
+          builder(fileName: name, partOfFile: fixture).partOfFile,
           fixture,
         );
       });
 
       test('returns file name when not provided', () {
         const name = 'ron_weasley';
-        expect(generator(fileName: name).fixtureFileName, name);
-        expect(builder(fileName: name).fixtureFileName, name);
+        expect(generator(fileName: name).partOfFile, name);
+        expect(builder(fileName: name).partOfFile, name);
       });
     });
   });
@@ -129,26 +131,6 @@ void main() {
     test('should create builder when not provided', () {
       expect(generator().builder, isA<PartBuilder>());
     });
-  });
-
-  test('#inputContent should return content', () {
-    expect(builder().inputContent, isA<Content>());
-    expect(generator().inputContent, isA<Content>());
-  });
-
-  group('#fixtureContent', () {
-    test('should return content from fixture', () {
-      expect(builder().fixtureContent(), isA<Content>());
-      expect(generator().fixtureContent(), isA<Content>());
-    });
-
-    test(
-      'should return null from fixture when not comparing with fixture',
-      () {
-        expect(builder(compareWithFixture: false).fixtureContent(), isNull);
-        expect(generator(compareWithFixture: false).fixtureContent(), isNull);
-      },
-    );
   });
 
   test('#test return future void', () {
