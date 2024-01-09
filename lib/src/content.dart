@@ -1,139 +1,60 @@
 import 'dart:io';
 
 import 'package:meta/meta.dart';
-
-/// Input/fixture type for [Content] of the generator
-enum PutType {
-  /// content that is an input to the generator
-  input,
-
-  /// content that is an fixture from the generator
-  fixture,
-}
+import 'package:path/path.dart' as p;
 
 /// {@template content}
 /// The contents of a local file
 /// {@endtemplate}
 class Content with GetContentMixin {
   /// {@macro content}
-  Content(
-    String fileName, {
-    required this.directory,
-    String? extension,
-  })  : type = PutType.input,
-        fromFileName = fileName,
-        _fileName = fileName,
-        _extension = extension;
+  Content({
+    required List<String> inputs,
+    required List<String> fixtures,
+    required String fixtureDir,
+    required String inputDir,
+    this.partOfFile,
+    required String? extension,
+  })  : _extension = extension, //
+        _input = inputs.map((file) => p.join(inputDir, file)).toList(),
+        _fixtures = fixtures.map((file) => p.join(fixtureDir, file)).toList(),
+        _output = fixtures.map((file) => p.join(inputDir, file)).toList();
 
   /// {@macro content}
-  ///
-  /// Formats the contents as a generated file
-  Content.fixture(
-    String fileName, {
-    String? fromFileName,
-    required this.directory,
-    String? extension,
-  })  : type = PutType.fixture,
-        fromFileName = fromFileName ?? fileName,
-        _fileName = fileName,
-        _extension = extension;
-
-  final String _fileName;
-
-  /// The name of the file
-  String get fileName {
-    final name = _fileName;
-
-    if (name.contains('.')) {
-      return name.split('.').first;
-    }
-
-    return name;
-  }
-
-  /// If the content is input or fixture
-  final PutType type;
-
+  final List<String> _input;
+  // the file to be used as source for the content
+  final List<String> _fixtures;
+  final List<String> _output;
   final String? _extension;
 
-  /// the directory of the file
-  final String directory;
-
-  /// the file to use as the source of the file
-  final String fromFileName;
+  /// The part directive that will be added to the generated file
+  final String? partOfFile;
 
   /// The contents of the file as a string
-  String get content {
-    if (type == PutType.fixture) {
-      return fixtureContent(
-        fileName,
-        fromFileName: fromFileName,
-        dirPath: directory,
-        isSharedPart: isSharedPartFile,
-      );
-    }
-
-    return inputContent(
-      fromFileName,
-      extension: extension(useFixturePart: true),
-      dirPath: directory,
-    );
+  Map<String, String> get output {
+    return {
+      for (var i = 0; i < _output.length; i++)
+        '$lib${_output[i]}': fixtureContent(
+          output: _fixtures[i],
+          partOfFile: partOfFile,
+        ),
+    };
   }
 
   /// whether the part file is shared with other generators
   bool get isSharedPartFile => _extension?.endsWith('.part') ?? false;
 
-  /// The contents of the file as a string, mapped by [filePath]
-  Map<String, String> get contentWithPaths {
-    return {filePath: content};
+  /// The contents of the file as a string, mapped by [_input]
+  Map<String, String> get input {
+    return {
+      for (final file in _input) '$lib$file': inputContent(file),
+    };
   }
 
   /// The test path directory of the file
   ///
   /// `a|lib/`
   static const String lib = 'a|lib/';
-
-  /// the test path of the file
-  String get filePath => '$lib$fileName${extension()}';
-
-  /// The extension of the file
-  ///
-  /// returns null when the file is a shared part
-  String extension({bool useFixturePart = false}) {
-    if (type == PutType.input && !useFixturePart) {
-      return '.dart';
-    }
-
-    var ext = _extension;
-
-    if (isSharedPartFile) {
-      return ext!;
-    }
-
-    if (ext == null) {
-      return '.g.dart';
-    }
-
-    if (ext == '.dart') {
-      return '.g$ext';
-    }
-
-    if (!ext.startsWith('.')) {
-      ext = '.$ext';
-    }
-
-    if (!ext.endsWith('.dart')) {
-      ext = '$ext.dart';
-    }
-
-    final extRegex = RegExp(r'^\.[\w]+\.dart$');
-
-    if (!extRegex.hasMatch(ext)) {
-      throw Exception('Invalid extension: $ext');
-    }
-
-    return ext;
-  }
 }
 
 /// Methods to get the contents of a file
@@ -142,46 +63,36 @@ mixin GetContentMixin {
   @visibleForTesting
   File? file;
 
-  /// Retrieves the file content from the [dirPath]/[fileName].dart file.
-  String inputContent(
-    String fileName, {
-    required String dirPath,
-    required String extension,
-  }) {
-    final path = '$dirPath/$fileName.dart';
-
-    final part = "part '$fileName$extension';";
+  /// Retrieves the file content from the [path].dart file.
+  String inputContent(String path) {
+    final part = "part '${p.basename(path)}';";
 
     final content = getFileContent(path);
 
-    final input = updatePart(content, part: part);
+    if (p.extension(path) == '.dart') {
+      return updatePart(content, part: part);
+    }
 
-    return input;
+    return content;
   }
 
-  /// Retrieves the file content from the [dirPath]/[fileName].dart file.
+  /// Retrieves the file content from the [partOfFile].dart file.
   ///
   /// Automatically adds
   /// - `part of '[fileName].dart';`
   /// - `// GENERATED CODE - DO NOT MODIFY BY HAND`
   /// - Generator's name (`T`) comment
-  String fixtureContent(
-    String fileName, {
-    required String fromFileName,
-    required String dirPath,
-    required bool isSharedPart,
+  String fixtureContent({
+    required String? partOfFile,
+    required String output,
   }) {
-    final path = '$dirPath/$fromFileName.dart';
+    var content = getFileContent(output);
 
-    final content = getFileContent(path);
+    if (partOfFile != null && p.extension(output) == '.dart') {
+      content = updatePart(content, part: "part of '$partOfFile.dart';");
+    }
 
-    final fixture = updatePart(
-      content,
-      part: "part of '$fileName.dart';",
-      removePart: isSharedPart,
-    );
-
-    final generatedFixture = updateGenerated(fixture);
+    final generatedFixture = updateGenerated(content);
 
     return generatedFixture;
   }
@@ -200,22 +111,16 @@ mixin GetContentMixin {
   }
 
   /// Adds or updates the [part] to the [content]
-  String updatePart(String content, {String? part, bool removePart = false}) {
-    final partRegex = RegExp("^part .*';", multiLine: true);
+  String updatePart(String content, {String? part}) {
+    // check if content already contains `part of '.*';` since we can only have
+    // 1 part of
 
-    if (removePart) {
-      return content
-          .replaceFirst(partRegex, '')
-          .replaceFirst(RegExp(r'^\s+'), '')
-          .replaceFirst('\n\n\n', '\n');
+    if (content.contains(RegExp('part of .*;'))) {
+      return content;
     }
 
-    assert(part != null, 'Part cannot be null');
-    part!;
-
-    // check for part with specific extension
-    if (content.contains(partRegex)) {
-      return content.replaceFirst(partRegex, part);
+    if (part == null) {
+      throw Exception('part is null');
     }
 
     if (!content.contains(RegExp('import .*;'))) {

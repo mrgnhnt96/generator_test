@@ -2,13 +2,12 @@
 
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
+import 'package:generator_test/src/content.dart';
 import 'package:logging/src/level.dart';
 import 'package:logging/src/log_record.dart';
 import 'package:logging/src/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
-
-import 'package:generator_test/src/content.dart';
 
 /// provides the build options to return a builder
 typedef GetBuilder = Builder Function(BuilderOptions options);
@@ -20,31 +19,32 @@ typedef OnLog = void Function(LogRecord);
 class SuccessGenerator {
   /// prepares the generator and file for testing
   const SuccessGenerator(
-    this.fileName,
+    this.inputFiles,
+    this.fixtureFiles,
     this.generator, {
+    required this.partOfFile,
     this.compareWithFixture = true,
     this.inputDir = defaultInputDir,
     this.fixtureDir = defaultFixtureDir,
-    String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
   })  : _builder = null,
         _logger = onLog,
         _logLevel = logLevel,
-        fixtureFileName = fixtureFileName ?? fileName,
         _extension = null,
         _options = null;
 
   /// uses the provided builder and files for testing
   SuccessGenerator.fromBuilder(
-    this.fileName,
+    this.inputFiles,
+    this.fixtureFiles,
     GetBuilder builder, {
+    this.partOfFile,
     Map<String, dynamic>? options,
     this.compareWithFixture = true,
     String? extension,
     this.inputDir = defaultInputDir,
     this.fixtureDir = defaultFixtureDir,
-    String? fixtureFileName,
     OnLog? onLog,
     Level? logLevel,
   })  : generator = null,
@@ -52,19 +52,24 @@ class SuccessGenerator {
         _logLevel = logLevel,
         _builder = builder,
         _options = options,
-        _extension = extension,
-        fixtureFileName = fixtureFileName ?? fileName;
+        _extension = extension;
 
   /// the default input file directory
   @visibleForTesting
-  static const defaultInputDir = 'test/fixture';
+  static const defaultInputDir = 'test/inputs';
 
   /// the default fixture file directory
   @visibleForTesting
-  static const defaultFixtureDir = 'test/fixture/fixtures';
+  static const defaultFixtureDir = 'test/fixtures';
 
   /// the names of the files to test
-  final String fileName;
+  final List<String> inputFiles;
+
+  /// the file to test
+  final List<String> fixtureFiles;
+
+  /// the file name to be used for `part of [partOfFile].[extension].dart`
+  final String? partOfFile;
 
   /// the generator to test
   final Generator? generator;
@@ -106,9 +111,6 @@ class SuccessGenerator {
   /// the directory to use for the generated fixture
   final String fixtureDir;
 
-  /// the fixture file name. [fileName] is used if not set
-  final String fixtureFileName;
-
   /// the builder for the test
   Builder get builder {
     if (_builder != null) {
@@ -124,28 +126,21 @@ class SuccessGenerator {
 
   final GetBuilder? _builder;
 
-  /// the content from the input file
-  Content get inputContent {
+  /// Gets the content for the input and fixture files
+  Content get content {
     return Content(
-      fileName,
+      inputs: inputFiles,
+      fixtures: fixtureFiles,
+      fixtureDir: fixtureDir,
+      inputDir: inputDir,
+      partOfFile: partOfFile,
       extension: extension,
-      directory: inputDir,
     );
   }
+
+  /// the content from the input file
 
   /// the content from the fixture file
-  Content? fixtureContent() {
-    if (!compareWithFixture) {
-      return null;
-    }
-
-    return Content.fixture(
-      fileName,
-      fromFileName: fixtureFileName,
-      extension: extension,
-      directory: fixtureDir,
-    );
-  }
 
   /// tests the generator
   Future<void> test() async {
@@ -155,8 +150,8 @@ class SuccessGenerator {
 
     await testBuilder(
       builder,
-      inputContent.contentWithPaths,
-      outputs: fixtureContent()?.contentWithPaths,
+      content.input,
+      outputs: compareWithFixture ? content.output : null,
       onLog: _logger ?? print,
       reader: await PackageAssetReader.currentIsolate(),
     );
