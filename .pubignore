@@ -2,3 +2,4 @@ test
 derry.yaml
 coverage
 build
+codecov
