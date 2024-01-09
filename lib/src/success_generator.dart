@@ -134,13 +134,9 @@ class SuccessGenerator {
       fixtureDir: fixtureDir,
       inputDir: inputDir,
       partOfFile: partOfFile,
-      extension: extension,
+      outputExtension: extension,
     );
   }
-
-  /// the content from the input file
-
-  /// the content from the fixture file
 
   /// tests the generator
   Future<void> test() async {

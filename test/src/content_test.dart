@@ -31,7 +31,7 @@ void main() {
       fixtureDir: '',
       inputDir: '',
       partOfFile: file,
-      extension: extension ?? '.dart',
+      outputExtension: extension ?? '.dart',
     );
   }
 
@@ -225,7 +225,7 @@ part 'vol.de.dart';
 ''',
         ];
 
-        final line = '*' * 77;
+        final line = '*' * 74;
         String header(String name) => '''
 // $line
 // $generatorName

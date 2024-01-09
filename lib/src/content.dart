@@ -14,8 +14,8 @@ class Content with GetContentMixin {
     required String fixtureDir,
     required String inputDir,
     this.partOfFile,
-    required String? extension,
-  })  : _extension = extension, //
+    required String? outputExtension,
+  })  : _outputExtension = outputExtension,
         _input = inputs.map((file) => p.join(inputDir, file)).toList(),
         _fixtures = fixtures.map((file) => p.join(fixtureDir, file)).toList(),
         _output = fixtures.map((file) => p.join(inputDir, file)).toList();
@@ -25,24 +25,43 @@ class Content with GetContentMixin {
   // the file to be used as source for the content
   final List<String> _fixtures;
   final List<String> _output;
-  final String? _extension;
+  final String? _outputExtension;
 
   /// The part directive that will be added to the generated file
   final String? partOfFile;
 
   /// The contents of the file as a string
   Map<String, String> get output {
+    final output = _output.map(useOutputExtension).toList();
+
     return {
-      for (var i = 0; i < _output.length; i++)
-        '$lib${_output[i]}': fixtureContent(
+      for (var i = 0; i < output.length; i++)
+        '$lib${output[i]}': fixtureContent(
           output: _fixtures[i],
           partOfFile: partOfFile,
+          outputExtension: _outputExtension,
         ),
     };
   }
 
+  /// replaces the [filePath]'s extension with the provided [_outputExtension]
+  String useOutputExtension(String filePath) {
+    final outputExtension = _outputExtension;
+    if (outputExtension == null) {
+      return filePath;
+    }
+
+    final extension = p.extension(filePath);
+
+    if (extension == outputExtension) {
+      return filePath;
+    }
+
+    return filePath.replaceFirst(extension, outputExtension);
+  }
+
   /// whether the part file is shared with other generators
-  bool get isSharedPartFile => _extension?.endsWith('.part') ?? false;
+  bool get isSharedPartFile => _outputExtension?.endsWith('.part') ?? false;
 
   /// The contents of the file as a string, mapped by [_input]
   Map<String, String> get input {
@@ -85,11 +104,16 @@ mixin GetContentMixin {
   String fixtureContent({
     required String? partOfFile,
     required String output,
+    required String? outputExtension,
   }) {
     var content = getFileContent(output);
 
     if (partOfFile != null && p.extension(output) == '.dart') {
-      content = updatePart(content, part: "part of '$partOfFile.dart';");
+      if (outputExtension != null && outputExtension.endsWith('.part')) {
+        //do nothing
+      } else {
+        content = updatePart(content, part: "part of '$partOfFile.dart';");
+      }
     }
 
     final generatedFixture = updateGenerated(content);
@@ -149,7 +173,7 @@ mixin GetContentMixin {
       return content;
     }
 
-    final line = '*' * 77;
+    final line = '*' * 74;
     String header(String name) => '''
 // $line
 // $name
