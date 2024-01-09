@@ -1,3 +1,7 @@
+# 0.3.1 - 1.9.2023
+
+- Fix the extension of output files
+
 # 0.3.0 - 1.9.2023
 
 - Support multiple file arguments for inputs and fixtures.
