@@ -9,3 +9,4 @@ coverage/
 .codecov_secret
 codecov
 todo.md
+.lh
