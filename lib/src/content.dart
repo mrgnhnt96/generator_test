@@ -51,7 +51,7 @@ class Content with GetContentMixin {
       return filePath;
     }
 
-    final extension = p.extension(filePath);
+    final extension = p.extension(filePath, 10);
 
     if (extension == outputExtension) {
       return filePath;
