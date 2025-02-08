@@ -1,6 +1,6 @@
-# 0.4.0 - 2.8.2025
+# 0.4.1 - 2.8.2025
 
- - Update dependencies
+- Update dependencies
 
 # 0.3.1 - 1.9.2023
 
