@@ -1,3 +1,7 @@
+# 0.4.0 - 2.8.2025
+
+ - Update dependencies
+
 # 0.3.1 - 1.9.2023
 
 - Fix the extension of output files
