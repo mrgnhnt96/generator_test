@@ -149,7 +149,6 @@ class SuccessGenerator {
       content.input,
       outputs: compareWithFixture ? content.output : null,
       onLog: _logger ?? print,
-      reader: await PackageAssetReader.currentIsolate(),
     );
   }
 }
