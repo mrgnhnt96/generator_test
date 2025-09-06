@@ -139,7 +139,10 @@ class SuccessGenerator {
   }
 
   /// tests the generator
-  Future<void> test() async {
+  Future<void> test({
+    TestReaderWriter? readerWriter,
+    String? rootPackage,
+  }) async {
     if (_logLevel != null) {
       Logger.root.level = _logLevel;
     }
@@ -149,6 +152,8 @@ class SuccessGenerator {
       content.input,
       outputs: compareWithFixture ? content.output : null,
       onLog: _logger ?? print,
+      rootPackage: rootPackage ?? 'a',
+      readerWriter: readerWriter,
     );
   }
 }
