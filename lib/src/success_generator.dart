@@ -1,5 +1,3 @@
-// ignore_for_file: implementation_imports
-
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/content.dart';
@@ -153,7 +151,8 @@ class SuccessGenerator {
       outputs: compareWithFixture ? content.output : null,
       onLog: _logger ?? print,
       rootPackage: rootPackage ?? 'a',
-      readerWriter: readerWriter,
+      readerWriter:
+          readerWriter ?? TestReaderWriter(rootPackage: rootPackage ?? 'a'),
     );
   }
 }
