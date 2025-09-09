@@ -1,4 +1,5 @@
 import 'package:build/build.dart';
+import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/success_generator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:source_gen/source_gen.dart';
@@ -142,7 +143,11 @@ void main() {
 
 class FakeGeneratorTester extends Fake implements SuccessGenerator {
   @override
-  Future<void> test() => Future.value();
+  Future<void> test({
+    TestReaderWriter? readerWriter,
+    String? rootPackage,
+  }) =>
+      Future.value();
 }
 
 class MockGenerator extends Mock implements Generator {}
