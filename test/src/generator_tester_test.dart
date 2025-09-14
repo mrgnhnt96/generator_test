@@ -143,19 +143,14 @@ void main() {
 
 class FakeGeneratorTester extends Fake implements SuccessGenerator {
   @override
-  Future<void> test({
-    TestReaderWriter? readerWriter,
-    String? rootPackage,
-  }) =>
+  Future<void> test({TestReaderWriter? readerWriter, String? rootPackage}) =>
       Future.value();
 }
 
 class MockGenerator extends Mock implements Generator {}
 
 class FakeBuilder extends Fake implements Builder {
-  FakeBuilder({
-    String? extension,
-  }) : extension = extension ?? '.g.dart';
+  FakeBuilder({String? extension}) : extension = extension ?? '.g.dart';
 
   final String extension;
 

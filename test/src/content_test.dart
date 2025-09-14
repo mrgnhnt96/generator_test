@@ -20,10 +20,7 @@ extension on Content {
 }
 
 void main() {
-  Content getContent({
-    String? fileName,
-    String? extension,
-  }) {
+  Content getContent({String? fileName, String? extension}) {
     final file = fileName ?? 'fileName.dart';
     return Content(
       inputs: [file],
@@ -36,16 +33,13 @@ void main() {
   }
 
   group('$Content()', () {
-    test(
-      'should return the file content from input file',
-      () {
-        final content = getContent()..file = FakeFile();
+    test('should return the file content from input file', () {
+      final content = getContent()..file = FakeFile();
 
-        final fileContent = content.fakeFileContent(forFixture: false);
+      final fileContent = content.fakeFileContent(forFixture: false);
 
-        expect(content.input.values.first, fileContent);
-      },
-    );
+      expect(content.input.values.first, fileContent);
+    });
   });
 
   group('$Content.fixture()', () {

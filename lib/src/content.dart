@@ -13,15 +13,16 @@ class Content with GetContentMixin {
     required List<String> fixtures,
     required String fixtureDir,
     required String inputDir,
-    this.partOfFile,
     required String? outputExtension,
-  })  : _outputExtension = outputExtension,
-        _input = inputs.map((file) => p.join(inputDir, file)).toList(),
-        _fixtures = fixtures.map((file) => p.join(fixtureDir, file)).toList(),
-        _output = fixtures.map((file) => p.join(inputDir, file)).toList();
+    this.partOfFile,
+  }) : _outputExtension = outputExtension,
+       _input = inputs.map((file) => p.join(inputDir, file)).toList(),
+       _fixtures = fixtures.map((file) => p.join(fixtureDir, file)).toList(),
+       _output = fixtures.map((file) => p.join(inputDir, file)).toList();
 
   /// {@macro content}
   final List<String> _input;
+
   // the file to be used as source for the content
   final List<String> _fixtures;
   final List<String> _output;
@@ -65,9 +66,7 @@ class Content with GetContentMixin {
 
   /// The contents of the file as a string, mapped by [_input]
   Map<String, String> get input {
-    return {
-      for (final file in _input) '$lib$file': inputContent(file),
-    };
+    return {for (final file in _input) '$lib$file': inputContent(file)};
   }
 
   /// The test path directory of the file
@@ -188,11 +187,11 @@ mixin GetContentMixin {
         continue;
       }
 
+      /// Ignore parameter assignments warning for content replacement
+      /// as we are intentionally replacing all occurrences
+      /// of the match with the header.
       // ignore: parameter_assignments
-      content = content.replaceAll(
-        match,
-        header(generatorName),
-      );
+      content = content.replaceAll(match, header(generatorName));
     }
 
     return content;
