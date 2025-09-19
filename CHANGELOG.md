@@ -1,3 +1,8 @@
+# 0.6.0 - 9.19.2025
+
+- Update dependencies
+- Remove derry.yaml
+
 # 0.4.1 - 2.8.2025
 
 - Update dependencies
