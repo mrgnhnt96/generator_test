@@ -1,19 +1,19 @@
 name: generator_test
 description: A library to help test generators and build runner packages using dart files instead of Strings
-version: 0.5.0
+version: 0.6.0
 repository: https://github.com/mrgnhnt96/generator_test
 homepage: https://github.com/mrgnhnt96/generator_test
 
 environment:
-  sdk: ^3.0.0
+  sdk: ^3.7.0
 
 dependencies:
-  build: ^3.1.0
+  build: ">=3.1.0 <5.0.0"
   build_test: ^3.3.3
   logging: ^1.3.0
   meta: ^1.7.0
   path: ^1.9.0
-  source_gen: ^3.1.0
+  source_gen: ">=3.1.0 <5.0.0"
 
 dev_dependencies:
   mocktail: ^1.0.4

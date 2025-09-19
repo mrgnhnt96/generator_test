@@ -1,9 +1,7 @@
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:generator_test/src/content.dart';
-import 'package:logging/src/level.dart';
-import 'package:logging/src/log_record.dart';
-import 'package:logging/src/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:source_gen/source_gen.dart';
 
@@ -26,11 +24,11 @@ class SuccessGenerator {
     this.fixtureDir = defaultFixtureDir,
     OnLog? onLog,
     Level? logLevel,
-  })  : _builder = null,
-        _logger = onLog,
-        _logLevel = logLevel,
-        _extension = null,
-        _options = null;
+  }) : _builder = null,
+       _logger = onLog,
+       _logLevel = logLevel,
+       _extension = null,
+       _options = null;
 
   /// uses the provided builder and files for testing
   SuccessGenerator.fromBuilder(
@@ -45,12 +43,12 @@ class SuccessGenerator {
     this.fixtureDir = defaultFixtureDir,
     OnLog? onLog,
     Level? logLevel,
-  })  : generator = null,
-        _logger = onLog,
-        _logLevel = logLevel,
-        _builder = builder,
-        _options = options,
-        _extension = extension;
+  }) : generator = null,
+       _logger = onLog,
+       _logLevel = logLevel,
+       _builder = builder,
+       _options = options,
+       _extension = extension;
 
   /// the default input file directory
   @visibleForTesting
@@ -112,14 +110,10 @@ class SuccessGenerator {
   /// the builder for the test
   Builder get builder {
     if (_builder != null) {
-      return _builder!(builderOptions);
+      return _builder(builderOptions);
     }
 
-    return PartBuilder(
-      [generator!],
-      '.g.dart',
-      options: builderOptions,
-    );
+    return PartBuilder([generator!], '.g.dart', options: builderOptions);
   }
 
   final GetBuilder? _builder;
